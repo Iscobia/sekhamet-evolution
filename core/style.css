@@ -798,3 +798,20 @@ backup-p {margin: 30px 0 2px 0px;}
     padding: 14px 12px;
   }
 }
+
+/* ================ BACKUP WARNING NOTE =============== */
+/* =================  EVOLUTION only  ================= */
+
+
+.backup-warning-note {
+  margin-top: -10px;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  color: #9a3412;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  text-align: left;
+}

@@ -42,7 +42,7 @@ window.APP_CONFIGS = {
     NOTIF_TITLE: "ENVELOPPE — Défi du jour",
     INSTALL_TITLE: "Installer ENVELOPPE ?",
     INSTALL_LABEL: "📱 Installer ENVELOPPE sur l'écran d'accueil",
-    MAIN_TITLE: "Faire de mon corps mon Sanctuaire en 30 jours",
+    MAIN_TITLE: "Je fais de mon corps mon Sanctuaire en 30 jours",
     BROWSER_TITLE: "ENVELOPPE - Défi Quotidien",
     TOTAL_DAYS: 31
   },
@@ -57,7 +57,7 @@ window.APP_CONFIGS = {
     NOTIF_TITLE: "EMERGENCE — Défi du jour",
     INSTALL_TITLE: "Installer EMERGENCE ?",
     INSTALL_LABEL: "📱 Installer EMERGENCE sur l'écran d'accueil",
-    MAIN_TITLE: "Faire de mon Inconscient mon Allié évolutif en 66 jours",
+    MAIN_TITLE: "Je fais de mon Inconscient mon Allié évolutif en 66 jours",
     BROWSER_TITLE: "EMERGENCE - Défi Quotidien",
     TOTAL_DAYS: 62
   }

@@ -58,8 +58,23 @@ async function loadInstallAppNameFromManifest() {
     INSTALL_APP_NAME = manifest.short_name || manifest.name || "EVOLUTION";
 
     console.log("📦 INSTALL_APP_NAME:", INSTALL_APP_NAME);
+
+    updateBackupWarningNote();
   } catch (e) {
     console.warn("⚠️ Impossible de lire le manifest pour short_name :", e);
+  }
+}
+
+function updateBackupWarningNote() {
+  const note = document.getElementById('evolution-backup-warning');
+  if (!note) return;
+
+  if (INSTALL_APP_NAME === 'EVOLUTION') {
+    note.textContent = `ATTENTION : tu ne sauvegardes ici que ta progression sur ${APP_NAME}. Si tu veux aussi protéger ta progression sur les autres thèmes, exporte-les depuis leurs pages respectives.`;
+    note.style.display = 'block';
+  } else {
+    note.textContent = '';
+    note.style.display = 'none';
   }
 }
 

@@ -43,6 +43,26 @@ function lsRemove(key) {
   localStorage.removeItem(storageKey(key));
 }
 
+let INSTALL_APP_NAME = "EVOLUTION";
+
+async function loadInstallAppNameFromManifest() {
+  try {
+    const manifestLink = document.querySelector('link[rel="manifest"]');
+    if (!manifestLink) return;
+
+    const manifestUrl = new URL(manifestLink.getAttribute('href'), window.location.href);
+    const response = await fetch(manifestUrl.href, { cache: 'no-store' });
+    if (!response.ok) return;
+
+    const manifest = await response.json();
+    INSTALL_APP_NAME = manifest.short_name || manifest.name || "EVOLUTION";
+
+    console.log("📦 INSTALL_APP_NAME:", INSTALL_APP_NAME);
+  } catch (e) {
+    console.warn("⚠️ Impossible de lire le manifest pour short_name :", e);
+  }
+}
+
 
 // Helpers localStorage (pour éviter les oublis getItem/removeItem)
 function lsGet(k, fallback = null) {
@@ -268,11 +288,11 @@ function showInstallOverlay() {
   overlay.innerHTML = `
     <div style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
       <div style="background:white; padding:30px; border-radius:20px; max-width:400px; text-align:center;">
-        <h2>Installer ${APP_NAME} ?</h2>
+        <h2>Installer ${INSTALL_APP_NAME} ?</h2>
         <p>Pour un accès rapide depuis ton écran d'accueil,</p>
         <div id="install-instructions">
           <p>👇🏻 clique sur le bouton jaune👇🏻</p>
-          <p>"📱 Installer ${APP_NAME} sur l'écran d'accueil"</p>
+          <p>"📱 Installer ${INSTALL_APP_NAME} sur l'écran d'accueil"</p>
           <p>ou</p>
           <p><strong>Android :</strong> Menu → "Ajouter à l'écran d'accueil"</p>
           <p><strong>iOS :</strong> Partager → "Sur l'écran d'accueil"</p>
@@ -392,6 +412,7 @@ function checkForUpdates() {
 
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🚀 Initialisation `${APP_NAME}`...');
+      await loadInstallAppNameFromManifest();
       debugOneSignal();
     
 
@@ -1209,7 +1230,7 @@ function setNoteForDay(day, text) {
     const installButton = document.createElement('button');
     installButton.id = 'install-pwa-btn';
     installButton.className = 'install-btn';
-    installButton.textContent = '📱 Installer `${APP_NAME}` sur l\'écran d\'accueil';
+    installButton.textContent = `📱 Installer ${INSTALL_APP_NAME} sur l'écran d'accueil`;
     installButton.style.cssText = `
       display: none;
       width: calc(100% - 40px);

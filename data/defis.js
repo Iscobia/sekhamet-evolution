@@ -72,6 +72,13 @@ const DefisOrigine = [
     termine: false,
     dateValidation: null
   },
+     {
+    jour: 11,
+    titre: "Les petits «plaisirs coupables»",
+    description: " Si tu as envie de te faire plaisir en mangeant quelque chose de potentiellement 'mauvais pour toi' ou ton régime, concentre-toi sur la sensation de ton corps si tu t'imagines accepter pleinement de te faire plaisir. Que ressens-tu ?",
+    termine: false,
+    dateValidation: null
+  },
   {
     jour: 12,
     titre: "Identifie les déclencheurs de tes envies alimentaires",

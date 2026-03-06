@@ -45,7 +45,6 @@ function lsRemove(key) {
 
 
 // Helpers localStorage (pour éviter les oublis getItem/removeItem)
-const storageKey = (k) => `${STORAGE_PREFIX}${k}`;
 function lsGet(k, fallback = null) {
   const v = localStorage.getItem(storageKey(k));
   return v === null ? fallback : v;

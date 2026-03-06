@@ -1253,11 +1253,9 @@ function setNoteForDay(day, text) {
       afficherDefiDuJour(jourActuelApresSync);
       
       showDailyWakeNotificationIfNeeded().then(ok => console.log('🔔 Notif wake envoyée ?', ok));
-      
+
       // ✅ Afficher le défi du jour au chargement (le calendrier seul ne remplit pas le panneau)
       afficherDefiDuJour(jourActuel);
-      // Montrer la Notif du jour à l'ouverture de l'app :
-      showDailyWakeNotificationIfNeeded();
 
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
@@ -1363,12 +1361,12 @@ setTimeout(() => {
       const today = new Date().toLocaleDateString('fr-FR');
     
       // Déjà montré aujourd'hui -> stop
-      if (localStorage.getItem('last_daily_notif_shown') === today) return false;
-    
+      if (lsGet('last_daily_notif_shown') === today) return false;
+
       // Anti-double déclenchement la même seconde (DOMContentLoaded + visibilitychange)
       const lockKey = 'daily_notif_lock';
-      if (localStorage.getItem(lockKey) === today) return false;
-      localStorage.setItem(STORAGE_PREFIX + lockKey, today);
+      if (lsGet(lockKey) === today) return false;
+      lsSet(lockKey, today);
     
       if (!('Notification' in window)) return false;
       if (Notification.permission !== 'granted') return false;
@@ -1377,7 +1375,7 @@ setTimeout(() => {
         // ✅ Priorité: notif riche via ton pipeline existant
         if (typeof window.envoyerNotificationDuJour === 'function') {
           await window.envoyerNotificationDuJour();
-          localStorage.setItem(STORAGE_PREFIX + 'last_daily_notif_shown', today);
+          lsSet('last_daily_notif_shown', today);
           return true;
         }
     
@@ -1392,7 +1390,7 @@ setTimeout(() => {
             tag: "envol-daily",
             renotify: false
           });
-          localStorage.setItem(STORAGE_PREFIX + 'last_daily_notif_shown', today);
+          lsSet('last_daily_notif_shown', today);
           return true;
         }
     
@@ -1401,11 +1399,11 @@ setTimeout(() => {
           body: "Ton défi du jour t’attend ✨",
           tag: "envol-daily"
         });
-        localStorage.setItem(STORAGE_PREFIX + 'last_daily_notif_shown', today);
+        lsSet('last_daily_notif_shown', today);
         return true;
       } catch (e) {
         // si échec -> on retire le lock pour retenter au prochain wake
-        localStorage.removeItem(lockKey);
+        lsRemove(lockKey);
         console.warn("Notif wake impossible:", e);
         return false;
       }

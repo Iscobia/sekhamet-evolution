@@ -45,19 +45,19 @@ self.addEventListener('message', (event) => {
     const data = event.data || {};
     if (data.action !== 'SEND_NOTIFICATION') return;
 
-    const { jour, titre, description, isTest } = data;
+    const { appId, appName, jour, titre, description, isTest, icon, badge, url, tag } = data;
 
     const notifTitle = isTest
-      ? `🎯 Test - Jour ${jour} - ${titre}`
-      : `Jour ${jour} - ${titre}`;
+      ? `🎯 ${appName} - Test - Jour ${jour} - ${titre}`
+      : `${appName} - Jour ${jour} - ${titre}`;
 
     self.registration.showNotification(notifTitle, {
       body: (description || '').substring(0, 240),
-      icon: '/sekhamet-envol/assets/icons/ENVOL-192_sansMarges.png',
-      badge: '/sekhamet-envol/assets/icons/ENVOL-192.png',
-      tag: `envol-jour-${jour}`,
+      icon: icon || '/core/assets/icons/default-192.png',
+      badge: badge || icon || '/core/assets/icons/default-192.png',
+      tag: tag || `${appId || 'app'}-jour-${jour}`,
       requireInteraction: true,
-      data: { jour: String(jour), url: '/sekhamet-envol/#notifications' },
+      data: { jour: String(jour), url: url || self.location.origin },
       actions: [
         { action: 'view', title: '👁️ Voir' },
         { action: 'mark-done', title: '✅ Marquer' },
@@ -78,7 +78,7 @@ self.addEventListener('notificationclick', (event) => {
     const data = event.notification.data || {};
     event.notification.close();
 
-    const appUrl = new URL('/sekhamet-envol/', self.location.origin).href;
+    const appUrl = data.url || self.location.origin;
 
     if (action === 'mark-done') {
       event.waitUntil(

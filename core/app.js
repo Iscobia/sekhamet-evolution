@@ -82,21 +82,45 @@ function renderProgramSelector() {
   if (!container) return;
 
   const programs = [
-    { id: "origine", label: "ORIGINE - Alimentation consciente" },
-    { id: "enveloppe", label: "ENVELOPPE - Retour à Soi par le corps" },
-    { id: "emergence", label: "EMERGENCE - Ton inconscient comme allié" }
+    {
+      id: "origine",
+      name: "ORIGINE",
+      subtitle: "Alimentation consciente",
+      themeClass: "theme-origine"
+    },
+    {
+      id: "enveloppe",
+      name: "ENVELOPPE",
+      subtitle: "Retour à Soi par le corps",
+      themeClass: "theme-enveloppe"
+    },
+    {
+      id: "emergence",
+      name: "EMERGENCE",
+      subtitle: "Inconscient allié",
+      themeClass: "theme-emergence"
+    }
   ];
 
   container.innerHTML = "";
+  container.className = "program-selector-grid";
 
   programs.forEach(program => {
     const button = document.createElement("button");
-    button.textContent = program.label;
     button.type = "button";
+    button.className = `program-chip ${program.themeClass}`;
 
     if (program.id === window.APP_ID) {
+      button.classList.add("is-active");
       button.disabled = true;
+    } else {
+      button.classList.add("is-inactive");
     }
+
+    button.innerHTML = `
+      <span class="program-chip-name">${program.name}</span>
+      <span class="program-chip-subtitle">${program.subtitle}</span>
+    `;
 
     button.addEventListener("click", () => {
       const url = new URL(window.location.href);
@@ -114,7 +138,7 @@ function applyAppBranding() {
 
   const mainTitle = document.getElementById("app-main-title");
   if (mainTitle) {
-    mainTitle.innerHTML = `${APP_MAIN_TITLE} - Jour <span id="current-day">${jourAffiche || jourActuel || 1}</span>`;
+    mainTitle.textContent = APP_MAIN_TITLE;
   }
 
   const favicon = document.getElementById("app-favicon");
@@ -410,8 +434,8 @@ function checkForUpdates() {
 // ===================================================================
 
 
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('🚀 Initialisation `${APP_NAME}`...');
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log(`🚀 Initialisation ${APP_NAME}...`);
       await loadInstallAppNameFromManifest();
       debugOneSignal();
     

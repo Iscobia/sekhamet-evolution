@@ -1,3 +1,4 @@
+(function () {
 // app.js - Logique principale de l'application
 
 const userAgent = navigator.userAgent;
@@ -1449,3 +1450,4 @@ console.log('🔧 Fonctions debug app.js exposées:');
 console.log('- peutPasserAuJourSuivant()');
 console.log('- verifierEtAvancerJour()');
 
+})();

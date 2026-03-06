@@ -753,6 +753,10 @@ async function programmerNotificationQuotidienne() {
 
   
 async function envoyerNotificationDuJour() {
+  if (isProgressPaused()) {
+  console.log(`⏸️ [Notification ${APP_NAME}] Ignorée : progression en pause`);
+  return;
+  }
   try {
     if (isProgressPaused()) {
       console.log(`⏸️ [Notification ${APP_NAME}] Ignorée : progression en pause`);
@@ -797,17 +801,7 @@ async function envoyerNotificationDuJour() {
         body: `Jour ${jourActuel}: ${defi.titre}\n\n${defi.description.substring(0, 100)}...`,
         icon: APP_ICON_192,
         tag: `test-${Date.now()}`,
-        requireInteraction: true, // Reste visible
-        actions: [
-          {
-            action: 'voir',
-            title: '👀 Voir le défi'
-          },
-          {
-            action: 'marquer',
-            title: '✅ Marquer comme fait'
-          }
-        ],
+        requireInteraction: true,
         data: {
           jour: jourActuel,
           url: window.location.href,
@@ -815,7 +809,7 @@ async function envoyerNotificationDuJour() {
         }
       };
       
-      const notification = new Notification(`🎯 ENVOL - Test Notification`, options);
+      const notification = new Notification(`🎯 ${APP_NAME} - Test Notification`, options);
       
       // Gestion des clics sur la notification
       notification.onclick = function(event) {

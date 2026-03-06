@@ -2,7 +2,7 @@
 /* ========== POLICES PERSONNALISÉES ========== */
 @font-face {
   font-family: 'Amperzand Sekhamet';
-  src: url('/sekhamet-envol/assets/fonts/AmperzandSekhamet_ACCENTS.ttf') format('truetype');
+  src: url('core/assets/fonts/AmperzandSekhamet_ACCENTS.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap; /* Améliore le chargement */
@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: 'Poiret One';
-  src: url('/sekhamet-envol/assets/fonts/PoiretOne-Regular.ttf') format('truetype');
+  src: url('core/assets/fonts/PoiretOne-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -385,7 +385,7 @@ button.madeup {
 }
 
 .secondary-btn {
-  background: (160deg, #0b252f 0%, #0e303d 100%);
+  background: linear-gradient(160deg, #0b252f 0%, #0e303d 100%);
   color: white;
   border: none;
   padding: 12px 25px;
@@ -397,7 +397,7 @@ button.madeup {
 }
 
 .secondary-btn:hover {
-  background: (160deg, #0a2029 0%, #0c2b36 100%);
+  background: linear-gradient(160deg, #0a2029 0%, #0c2b36 100%);
 }
 
 
@@ -462,7 +462,7 @@ button.madeup {
   box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
 }
 
-.separator {margin:20px,auto, 20px,auto;opacity:0.5;width:40%;}
+.separator {margin:20px,auto,20px,auto;opacity:0.5;width:40%;}
 
 /* ========== RESPONSIVE ========== */
 
@@ -485,7 +485,7 @@ button.madeup {
     height: 40px;
     font-size: 0.9rem;
   }
-}
+
 
 /* STYLE EN DOUBLON DANS APP.JS : du bouton d'installation sur l'écran d'accueil*/
 

@@ -4,12 +4,12 @@
    CONFIGURATION DE L'APPLICATION
    ========================================================= */
 
-// Programme actif
 const urlParams = new URLSearchParams(window.location.search);
 const appFromUrl = urlParams.get("app");
 
-window.APP_ID = appFromUrl || "enveloppe";
-// valeurs possibles : "origine" | "enveloppe" | "emergence"
+const ALLOWED_APP_IDS = ["origine", "enveloppe", "emergence"];
+
+window.APP_ID = ALLOWED_APP_IDS.includes(appFromUrl) ? appFromUrl : "enveloppe";
 
 
 /* =========================================================
@@ -27,7 +27,9 @@ window.APP_CONFIGS = {
     NOTIF_TITLE: "ORIGINE — Défi du jour",
     INSTALL_TITLE: "Installer ORIGINE ?",
     INSTALL_LABEL: "📱 Installer ORIGINE sur l'écran d'accueil",
-    TOTAL_DAYS: 22
+    MAIN_TITLE: "Vers une alimentation consciente en 21 jours",
+    BROWSER_TITLE: "ORIGINE - Défi Quotidien",
+    TOTAL_DAYS: 21
   },
 
   enveloppe: {
@@ -40,6 +42,8 @@ window.APP_CONFIGS = {
     NOTIF_TITLE: "ENVELOPPE — Défi du jour",
     INSTALL_TITLE: "Installer ENVELOPPE ?",
     INSTALL_LABEL: "📱 Installer ENVELOPPE sur l'écran d'accueil",
+    MAIN_TITLE: "Faire de mon corps mon Sanctuaire en 30 jours",
+    BROWSER_TITLE: "ENVELOPPE - Défi Quotidien",
     TOTAL_DAYS: 31
   },
 
@@ -53,7 +57,9 @@ window.APP_CONFIGS = {
     NOTIF_TITLE: "EMERGENCE — Défi du jour",
     INSTALL_TITLE: "Installer EMERGENCE ?",
     INSTALL_LABEL: "📱 Installer EMERGENCE sur l'écran d'accueil",
-    TOTAL_DAYS: 31
+    MAIN_TITLE: "Faire de mon Inconscient mon Allié évolutif en 66 jours",
+    BROWSER_TITLE: "EMERGENCE - Défi Quotidien",
+    TOTAL_DAYS: 62
   }
 };
 
@@ -62,4 +68,4 @@ window.APP_CONFIGS = {
    CONFIG ACTIVE
    ========================================================= */
 
-window.APP_CONFIG = window.APP_CONFIGS[window.APP_ID];
+window.APP_CONFIG = window.APP_CONFIGS[window.APP_ID] || window.APP_CONFIGS.enveloppe;

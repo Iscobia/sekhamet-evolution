@@ -7,6 +7,11 @@ const isSafari = /Safari/i.test(userAgent) && !/Chrome/i.test(userAgent);
 const APP = window.APP_CONFIG || {};
 const APP_ID = APP.ID || "app";
 const APP_NAME = APP.NAME || "APP";
+const APP_MAIN_TITLE = APP.MAIN_TITLE || "Mon Défi Quotidien";
+const APP_BROWSER_TITLE = APP.BROWSER_TITLE || `${APP_NAME} - Défi Quotidien`;
+const APP_ICON_192 = APP.ICON_192 || "./core/assets/icons/default-192.png";
+const APP_ICON_512 = APP.ICON_512 || "./core/assets/icons/default-512.png";
+
 console.log("APP_ID:", APP_ID);
 console.log("APP_NAME:", APP_NAME);
 console.log("DEFIS LOADED:", window.DEFIS?.length);
@@ -16,6 +21,28 @@ const CACHE_NAME = APP.CACHE_NAME || `${APP_ID}-pwa-v1`;
 
 // Stockage isolé par app
 const STORAGE_PREFIX = APP.STORAGE_PREFIX || `${APP_ID}_`;
+
+// ===============================
+// Gestion du stockage local
+// ===============================
+
+function storageKey(key) {
+  return `${STORAGE_PREFIX}${key}`;
+} // lsGet("jour_actuel") lit : origine_jour_actuel || et si Si APP_ID = "enveloppe" : enveloppe_jour_actuel
+
+function lsGet(key, fallback = null) {
+  const value = localStorage.getItem(storageKey(key));
+  return value !== null ? value : fallback;
+}
+
+function lsSet(key, value) {
+  localStorage.setItem(storageKey(key), value);
+}
+
+function lsRemove(key) {
+  localStorage.removeItem(storageKey(key));
+}
+
 
 // Helpers localStorage (pour éviter les oublis getItem/removeItem)
 const storageKey = (k) => `${STORAGE_PREFIX}${k}`;
@@ -62,6 +89,29 @@ function renderProgramSelector() {
   });
 }
 
+
+function applyAppBranding() {
+  document.title = APP_BROWSER_TITLE;
+
+  const mainTitle = document.getElementById("app-main-title");
+  if (mainTitle) {
+    mainTitle.innerHTML = `${APP_MAIN_TITLE} - Jour <span id="current-day">${jourAffiche || jourActuel || 1}</span>`;
+  }
+
+  const favicon = document.getElementById("app-favicon");
+  if (favicon) favicon.href = APP_ICON_192;
+
+  const appleTouchIcon = document.getElementById("app-apple-touch-icon");
+  if (appleTouchIcon) appleTouchIcon.href = APP_ICON_192;
+
+  const footerLogo = document.getElementById("footer-logo");
+  if (footerLogo) {
+    footerLogo.src = APP_ICON_192;
+    footerLogo.alt = APP_NAME;
+  }
+}
+
+
 // === On attend que envol-notifications.js soit chargé :
 
 // Au début de app.js
@@ -72,6 +122,7 @@ function initApp() {
   console.log('🔔 Initialisation app...');
 
   renderProgramSelector();
+  applyAppBranding();
 
   if (typeof setupNotificationUI === 'function') {
     console.log('✅ notifications disponibles');
@@ -212,7 +263,7 @@ function centrerCalendrierSurJour(jour) {
 }
 
 function showInstallOverlay() {
-  if (localStorage.getItem('install_prompt_shown')) return;
+  if (lsGet('install_prompt_shown')) return;
   const overlay = document.createElement('div');
   overlay.id = 'install-overlay';
   overlay.innerHTML = `
@@ -236,12 +287,12 @@ function showInstallOverlay() {
   document.body.appendChild(overlay);
   document.getElementById('close-overlay').addEventListener('click', () => {
     overlay.remove();
-    localStorage.setItem(STORAGE_PREFIX + 'install_prompt_shown', 'true');
+    lsSet('install_prompt_shown', 'true');
   });
   setTimeout(() => {
     if (document.getElementById('install-overlay')) {
       document.getElementById('install-overlay').remove();
-      localStorage.setItem(STORAGE_PREFIX + 'install_prompt_shown', 'true');
+      lsSet('install_prompt_shown', 'true');
     }
   }, 10000);
 }
@@ -425,36 +476,32 @@ document.addEventListener('DOMContentLoaded', function() {
       // Listener DU bouton "Marquer comme accompli" (à attacher UNE SEULE FOIS)
         if (markDoneButton && !markDoneButton.dataset.listenerAttached) {
           markDoneButton.dataset.listenerAttached = "true";
-        
+
           markDoneButton.addEventListener('click', function() {
             try {
-              const jourCourant = parseInt(localStorage.getItem('jour_actuel')) || 1;
+              const jourCourant = parseInt(lsGet('jour_actuel', '1'), 10) || 1;
               const jourCible = parseInt(jourAffiche, 10) || jourCourant;
 
-        
               const defi = getDefiByDay(jourCible);
               if (!defi) return;
-        
-              console.log('✅ [VALIDATION] jourCible:', jourCible, 'jourCourant:', jourCourant);
-        
-              // Interdire le futur
+
+              console.log('✅ [VALIDATION] jourCible:', jourCible, 'jourCourant:', jourCourant, 'APP_ID:', APP_ID);
+
               if (jourCible > jourCourant) {
                 alert("⏳ Tu pourras valider ce défi le jour J (ou rattraper un défi passé).");
                 return;
               }
-        
-              // Jour passé = rattrapage
+
               if (jourCible < jourCourant) {
-                const madeupDefis = JSON.parse(localStorage.getItem('defis_madeup') || '[]');
+                const madeupDefis = JSON.parse(lsGet('defis_madeup', '[]'));
                 if (!madeupDefis.includes(jourCible)) {
                   madeupDefis.push(jourCible);
-                  localStorage.setItem(STORAGE_PREFIX + 'defis_madeup', JSON.stringify(madeupDefis));
+                  lsSet('defis_madeup', JSON.stringify(madeupDefis));
                   alert("✨ Défi rattrapé avec succès !");
                 } else {
                   alert("✨ Ce défi est déjà rattrapé.");
                 }
               } else {
-                // Jour courant = validation normale
                 if (!defi.termine) {
                   defi.termine = true;
                   defi.dateValidation = new Date().toISOString();
@@ -463,13 +510,12 @@ document.addEventListener('DOMContentLoaded', function() {
                   alert("✅ Ce défi est déjà accompli.");
                 }
               }
-        
+
               if (typeof saveProgression === 'function') saveProgression();
-        
-              // Rafraîchir l'affichage + calendrier
+
               afficherDefiDuJour(jourCible);
               if (typeof genererCalendrier === 'function') genererCalendrier();
-        
+
             } catch (e) {
               console.error("❌ Erreur validation défi:", e);
               alert("Oh mince… une erreur est survenue pendant la validation. Essaie de recharger l’app.");
@@ -517,8 +563,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Nouvelle propriété : défis "rattrapés" (ratés mais validés après)
     function initMadeupDefis() {
-      if (!localStorage.getItem('defis_madeup')) {
-        localStorage.setItem(STORAGE_PREFIX + 'defis_madeup', JSON.stringify([]));
+      if (!lsGet('defis_madeup')) {
+        lsSet('defis_madeup', JSON.stringify([]));
       }
     }
 
@@ -531,76 +577,76 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function verifierJoursManques() {
       const aujourdhui = new Date().toLocaleDateString('fr-FR');
-      const dernierAcces = localStorage.getItem('dernier_acces');
+      const dernierAcces = lsGet('dernier_acces');
       
       // Premier accès
       if (!dernierAcces) {
-        localStorage.setItem(STORAGE_PREFIX + 'dernier_acces', aujourdhui);
+        lsSet('dernier_acces',aujourdhui);
         return jourActuel;
       }
-      
+
       // Calculer différence en jours
       const date1 = new Date(dernierAcces.split('/').reverse().join('-'));
       const date2 = new Date(aujourdhui.split('/').reverse().join('-'));
       const diffJours = Math.floor((date2 - date1) / (1000 * 60 * 60 * 24));
-      
+
       console.log('📅 Dernier accès:', dernierAcces, 'Différence:', diffJours, 'jours');
-      
+
       if (diffJours > 0) {
         // Marquer les jours passés comme manqués (sauf si déjà fait ou rattrapé)
         for (let i = 0; i < diffJours && jourActuel + i <= APP.TOTAL_DAYS; i++) {
           const jourAMarquer = jourActuel + i;
           const defi = getDefiByDay(jourAMarquer);
-          
+
           // Vérifier si déjà rattrapé
-          const madeupDefis = JSON.parse(localStorage.getItem('defis_madeup') || '[]');
+          const madeupDefis = JSON.parse(lsGet('defis_madeup', '[]'));
           const estDejaRattrape = madeupDefis.includes(jourAMarquer);
-          
+
           if (defi && !defi.termine && !estDejaRattrape) {
             console.log(`❌ Jour ${jourAMarquer} marqué comme manqué`);
             // On ne change pas defi.termine ici, on utilise juste la classe CSS
           }
         }
-        
+
         // Mettre à jour le dernier accès
-        localStorage.setItem(STORAGE_PREFIX + 'dernier_acces', aujourdhui);
+        lsSet('dernier_acces',aujourdhui);
       }
-      
+
       return jourActuel;
     }
 
       //===================================================================
       //======= FIN DE 'VÉRIFIER JOURS MANQUÉS' =============================
       //===================================================================
-      
-  
+
+
       // Fonction originale anti-speed running (conservée)
       function peutPasserAuJourSuivant() {
         const aujourdhui = new Date().toLocaleDateString('fr-FR');
-        const dernierChangement = localStorage.getItem('dernier_changement_jour');
-        
+        const dernierChangement = lsGet('dernier_changement_jour');
+
         // DEBUG
         console.log('📅 [DEBUG] Vérification avancement:', {
           aujourdhui,
           dernierChangement,
           sontIdentiques: dernierChangement === aujourdhui,
-          jourActuel: parseInt(localStorage.getItem('jour_actuel'))
+          jourActuel: parseInt(lsGet('jour_actuel', '1'))
         });
-        
+
          // ✅ Premier accès : on initialise, mais on N'AVANCE PAS
         if (!dernierChangement) {
           console.log('✅ Premier accès - initialisation (pas d’avancement)');
-          localStorage.setItem(STORAGE_PREFIX + 'dernier_changement_jour', aujourdhui);
+          lsSet('dernier_changement_jour',aujourdhui);
           return false;
         }
 
-        
+
         // Autoriser si dates différentes
         if (dernierChangement !== aujourdhui) {
           console.log('✅ Nouveau jour - autorisé');
           return true; // pas d'écriture ici
         }
-        
+
         console.log('❌ Même jour - bloqué');
         return false;
       }
@@ -625,13 +671,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const yyyy = date.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
   }
-  
-  //======FIN de la protection du helper  
-  
-    
+
+  //======FIN de la protection du helper
+
+
 function verifierEtAvancerJour() {
   try {
-    let jour = parseInt(localStorage.getItem('jour_actuel'), 10);
+    let jour = parseInt(lsGet('jour_actuel', '1'), 10);
     if (!jour || isNaN(jour)) jour = 1;
 
     // On synchronise la variable globale
@@ -648,14 +694,14 @@ function verifierEtAvancerJour() {
 
     // ======= NOUVEAU : calcul delta jours (multi-jours) =======
     const aujourdhuiStr = new Date().toLocaleDateString('fr-FR'); // "dd/mm/yyyy"
-    const dernierStr = localStorage.getItem('dernier_changement_jour'); // "dd/mm/yyyy" ou null
+    const dernierStr = lsGet('dernier_changement_jour'); // "dd/mm/yyyy" ou null
 
     console.log('   Date aujourd’hui:', aujourdhuiStr);
     console.log('   Dernier changement:', dernierStr);
 
     // Premier lancement : on pose juste la référence, sans avancer
     if (!dernierStr) {
-      localStorage.setItem(STORAGE_PREFIX + 'dernier_changement_jour', aujourdhuiStr);
+      lsSet('dernier_changement_jour',aujourdhuiStr);
       console.log('✅ Premier lancement : dernier_changement_jour initialisé (pas d’avancement)');
     } else {
       // Si la date a changé, on calcule combien de jours se sont écoulés
@@ -663,13 +709,13 @@ function verifierEtAvancerJour() {
         // Parse FR "dd/mm/yyyy" -> Date à MIDI (évite bugs changement d’heure)
         const ancienneDate = parseDateFRSafe(dernierStr);
         const nouvelleDate = parseDateFRSafe(aujourdhuiStr);
-        
+
         if (!ancienneDate || !nouvelleDate) {
           console.warn('⚠️ Date invalide détectée -> resync dernier_changement_jour', { dernierStr, aujourdhuiStr });
-          localStorage.setItem(STORAGE_PREFIX + 'dernier_changement_jour', aujourdhuiStr);
+          lsSet('dernier_changement_jour',aujourdhuiStr);
           return jourActuel; // on ne casse pas l’app
         }
-        
+
 
         const diffMs = nouvelleDate.getTime() - ancienneDate.getTime();
         const diffJours = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -680,18 +726,18 @@ function verifierEtAvancerJour() {
           const nouveauJour = Math.min(APP.TOTAL_DAYS, jourActuel + diffJours);
           if (nouveauJour !== jourActuel) {
             jourActuel = nouveauJour;
-            localStorage.setItem(STORAGE_PREFIX + 'jour_actuel', String(jourActuel));
+            lsSet('jour_actuel',String(jourActuel));
             console.log(`🎯 AVANCÉ de ${diffJours} jour(s) -> jour_actuel:`, jourActuel);
           } else {
             console.log('⏸️ Déjà au max (APP.TOTAL_DAYS), pas d’avancement');
           }
 
           // Important : on met à jour la date de référence
-          localStorage.setItem(STORAGE_PREFIX + 'dernier_changement_jour', aujourdhuiStr);
+          lsSet('dernier_changement_jour',aujourdhuiStr);
         } else {
           console.log('⏸️ Date différente mais diffJours <= 0 (heure/date système ?) — pas d’avancement');
           // On peut quand même resynchroniser la date si tu veux être stricte :
-          // localStorage.setItem(STORAGE_PREFIX + 'dernier_changement_jour', aujourdhuiStr);
+          // lsSet('dernier_changement_jour',aujourdhuiStr);
         }
       } else {
         console.log('❌ Même jour - bloqué');
@@ -700,7 +746,7 @@ function verifierEtAvancerJour() {
     // ======= FIN NOUVEAU =======
 
 
-    
+
 
     // ✅ Ne change l’écran que si l’utilisateur regardait le jour J (ou si rien n’est affiché)
     if (!jourAffiche) {
@@ -724,13 +770,13 @@ function verifierEtAvancerJour() {
   }
 } // Fin de VérifierEtAvancerJour
 
-// ===== FIN de Notification Jouralière à l'ouverture de l'app ===== // 
+// ===== FIN de Notification Jouralière à l'ouverture de l'app ===== //
 
 // ===== Notes (stockées localement) =====
-const NOTES_KEY = 'envol_notes';
+const NOTES_KEY = 'notes';
 
-function getAllNotes() {
-  try { return JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'); }
+function getAllNotes() {function getAllNotes() {
+  try { return JSON.parse(lsGet(NOTES_KEY, '{}')); }
   catch { return {}; }
 }
 
@@ -749,18 +795,18 @@ function setNoteForDay(day, text) {
   } else {
     notes[k] = v;
   }
-  localStorage.setItem(STORAGE_PREFIX + NOTES_KEY, JSON.stringify(notes));
+  lsSet(NOTES_KEY, JSON.stringify(notes));
 }
 
 // ===== Fin des Notes (stockées localement) =====
 
-    
+
     // ========== FONCTIONS D'AFFICHAGE (MODIFIÉES) ==========
-    
+
   function afficherDefiDuJour(jour) {
       const defi = getDefiByDay(jour);
       if (!defi) return;
-    
+
 
     // Pour que quand on clique un jour du calendrier ou quand le jour avance,
     // les notes affichées suivent: ==========================================
@@ -769,10 +815,10 @@ function setNoteForDay(day, text) {
       if (notesTextarea) notesTextarea.value = getNoteForDay(jour);
       if (notesStatus) notesStatus.textContent = '';
     // =======================================================================
-        
+
       jourAffiche = jour; // 👈 IMPORTANT
-               
-      
+
+
       if (currentDayElement) currentDayElement.textContent = jour;
       if (dayCurrentElement) dayCurrentElement.textContent = jour;
       if (challengeTitleElement) challengeTitleElement.textContent = defi.titre;
@@ -781,38 +827,38 @@ function setNoteForDay(day, text) {
   // Notes : charger celles du jour affiché
   if (notesTextarea) notesTextarea.value = getNoteForDay(jour);
   if (notesStatus) notesStatus.textContent = '';
-    
+
   // ✅ Mettre à jour le bouton selon l'état du jour affiché
   updateMarkDoneButtonUI(jour);
   refreshNotesUIForDay(jour);
-  
+
   console.log("📌 afficherDefiDuJour appelé avec:", jour, "=> jourAffiche =", jourAffiche);
   }
- 
+
 
 
 
  function updateMarkDoneButtonUI(jour) {
     if (!markDoneButton) return;
-  
+
     const jourCourant = parseInt(jourActuel, 10) || 1;
     const jourCible = parseInt(jour, 10);
     const defi = getDefiByDay(jourCible);
     if (!defi || isNaN(jourCible)) return;
-  
-    const madeupDefis = JSON.parse(localStorage.getItem('defis_madeup') || '[]');
+
+    const madeupDefis = JSON.parse(lsGet('defis_madeup', '[]'));
     const estRattrape = madeupDefis.includes(jourCible);
-  
+
     // Nettoyer les états couleur précédents (on garde tes classes de base)
     markDoneButton.classList.remove(
       'mark-future', 'mark-rattraper', 'mark-madeup', 'mark-done', 'mark-default'
     );
-  
+
     // Par défaut
     let label = "✅ Marquer comme accompli";
     let disabled = false;
     let stateClass = "mark-default";
-  
+
     if (jourCible > jourCourant) {
       label = "⏳ Disponible le jour J";
       disabled = true;
@@ -829,33 +875,33 @@ function setNoteForDay(day, text) {
       label = "✨ Rattraper ce défi";
       stateClass = "mark-rattraper";  // rouge
     }
-  
+
     markDoneButton.textContent = label;
     markDoneButton.disabled = disabled;
     markDoneButton.classList.add(stateClass);
   }
 
 
-  
 
 
-  
+
+
     function genererCalendrier() {
       if (!calendarGrid) return;
       calendarGrid.innerHTML = '';
-      
+
       // Initialiser les défis rattrapés
       initMadeupDefis();
-      const madeupDefis = JSON.parse(localStorage.getItem('defis_madeup') || '[]');
-      
+      const madeupDefis = JSON.parse(lsGet('defis_madeup', '[]'));
+
       for (let jour = 1; jour <= APP.TOTAL_DAYS; jour++) {
         const defi = getDefiByDay(jour);
         const dayElement = document.createElement('div');
         dayElement.className = 'calendar-day';
         dayElement.textContent = jour;
-        
+
         const estDejaRattrape = madeupDefis.includes(jour);
-        
+
         if (defi.termine) {
           dayElement.classList.add('completed'); // Vert
         } else if (estDejaRattrape) {
@@ -867,12 +913,12 @@ function setNoteForDay(day, text) {
         } else {
           dayElement.classList.add('upcoming'); // Gris
         }
-        
+
         dayElement.addEventListener('click', () => afficherDefiDuJour(jour));
         calendarGrid.appendChild(dayElement);
       }
       centrerCalendrierSurJour(jourActuel);
-    }   
+    }
 
 
 
@@ -895,31 +941,31 @@ function setNoteForDay(day, text) {
 
 
 // ========== NOTES (par jour) ==========
-  
+
     // 1) Références DOM
     const notesTextarea = document.getElementById('notes-textarea');
     const clearNotesBtn = document.getElementById('clear-notes-btn');
-    const notesStatusEl = document.getElementById('notes-status');  
+    const notesStatusEl = document.getElementById('notes-status');
     notesSaveTimer = null;
-    
+
     // 2) Helpers stockage
     function getNotesMap() {
       try {
-        return JSON.parse(localStorage.getItem('envol_notes_by_day') || '{}');
+        return JSON.parse(lsGet('notes_by_day', '{}'));
       } catch {
         return {};
       }
     }
-    
+
     function setNotesMap(map) {
-      localStorage.setItem(STORAGE_PREFIX + 'envol_notes_by_day', JSON.stringify(map));
+      lsSet('notes_by_day', JSON.stringify(map));
     }
-    
+
     function getNoteForDay(day) {
       const map = getNotesMap();
       return map[String(day)] || '';
     }
-    
+
     function setNoteForDay(day, text) {
       const map = getNotesMap();
       const key = String(day);
@@ -930,29 +976,29 @@ function setNoteForDay(day, text) {
       }
       setNotesMap(map);
     }
-    
+
     function setNotesStatus(msg) {
       if (!notesStatusEl) return;
       notesStatusEl.textContent = msg || '';
     }
-    
+
     // 3) Charger les notes du jour affiché (à appeler quand on change de jour)
     function refreshNotesUIForDay(day) {
       if (!notesTextarea) return;
       notesTextarea.value = getNoteForDay(day);
       setNotesStatus('');
     }
-    
+
     // 4) Listeners
     if (notesTextarea) {
       notesTextarea.addEventListener('input', () => {
         const day =
           parseInt(jourAffiche, 10) ||
-          (parseInt(localStorage.getItem('jour_actuel'), 10) || 1);
-    
+          (parseInt(lsGet('jour_actuel', '1'), 10) || 1);
+
         setNotesStatus('Sauvegarde…');
         clearTimeout(notesSaveTimer);
-    
+
         notesSaveTimer = setTimeout(() => {
           setNoteForDay(day, notesTextarea.value);
           setNotesStatus('✅ Sauvegardé');
@@ -960,31 +1006,31 @@ function setNoteForDay(day, text) {
         }, 350);
       });
     }
-    
+
     if (clearNotesBtn && notesTextarea) {
       clearNotesBtn.addEventListener('click', () => {
         const day =
           parseInt(jourAffiche, 10) ||
-          (parseInt(localStorage.getItem('jour_actuel'), 10) || 1);
-    
+          (parseInt(lsGet('jour_actuel', '1'), 10) || 1);
+
         if (!confirm('Effacer les notes de ce jour ?')) return;
-    
+
         notesTextarea.value = '';
         setNoteForDay(day, '');
         setNotesStatus('🧹 Notes effacées');
         setTimeout(() => setNotesStatus(''), 1500);
       });
     }
-    
+
     // 5) Premier chargement (jour actuel affiché au démarrage)
     refreshNotesUIForDay(jourAffiche);
 
 // =========== NOTES fin =================
-    
 
-  
+
+
       // ========== BOUTONS DÉPANNAGE ==========
-      
+
       // 1. VIDER LE CACHE
       document.getElementById('clear-cache-btn')?.addEventListener('click', async function() {
         const btn = this;
@@ -1016,24 +1062,24 @@ function setNoteForDay(day, text) {
         }
       });
 
-    
-  
+
+
       // 4. EXPORTER SAUVEGARDE
       document.getElementById('export-backup-btn')?.addEventListener('click', function() {
         const backupData = {
           version: '1.0',
           timestamp: new Date().toISOString(),
-          progression: JSON.parse(localStorage.getItem('defis_envol') || '[]'),
-          jourActuel: localStorage.getItem('jour_actuel'),
-          dernierChangement: localStorage.getItem('dernier_changement_jour'),
-          heureNotification: localStorage.getItem('heure_notification'),
-          notesByDay: JSON.parse(localStorage.getItem('envol_notes_by_day') || '{}'),
+          progression: JSON.parse(lsGet('defis_progression', '[]')),
+          jourActuel: lsGet('jour_actuel', '1'),
+          dernierChangement: lsGet('dernier_changement_jour', null),
+          heureNotification: lsGet('heure_notification', '08:00'),
+          notesByDay: JSON.parse(lsGet('notes_by_day', '{}')),
         };
         const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `sauvegarde-envol-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `sauvegarde-${APP_ID}-${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1041,8 +1087,8 @@ function setNoteForDay(day, text) {
         alert('✅ Sauvegarde exportée !');
       });
 
-    
-  
+
+
       // 5. IMPORTER SAUVEGARDE
       document.getElementById('import-backup-btn')?.addEventListener('click', function() {
         const input = document.createElement('input');
@@ -1057,31 +1103,31 @@ function setNoteForDay(day, text) {
               const backupData = JSON.parse(event.target.result);
               if (!backupData.progression || !backupData.jourActuel) throw new Error('Format invalide');
               if (confirm(`Importer la sauvegarde du ${new Date(backupData.timestamp).toLocaleDateString('fr-FR')} ?`)) {
-              localStorage.setItem(STORAGE_PREFIX + 'defis_envol', JSON.stringify(backupData.progression));
-              localStorage.setItem(STORAGE_PREFIX + 'jour_actuel', backupData.jourActuel);
-              if (backupData.dernierChangement) localStorage.setItem(STORAGE_PREFIX + 'dernier_changement_jour', backupData.dernierChangement);
-              if (backupData.heureNotification) localStorage.setItem(STORAGE_PREFIX + 'heure_notification', backupData.heureNotification);
-              
+              lsSet('defis_progression', JSON.stringify(backupData.progression));
+              lsSet('jour_actuel', backupData.jourActuel);
+              if (backupData.dernierChangement) lsSet('dernier_changement_jour', backupData.dernierChangement);
+              if (backupData.heureNotification) lsSet('heure_notification', backupData.heureNotification);
+
               // ✅ Notes (par jour)
               if (backupData.notesByDay) {
-                localStorage.setItem(STORAGE_PREFIX + 'envol_notes_by_day', JSON.stringify(backupData.notesByDay));
+                lsSet('notes_by_day', JSON.stringify(backupData.notesByDay));
               } else if (backupData.notes) {
                 // Compatibilité ancienne sauvegarde "notes"
                 // Si c'était une string -> on la met sur le jourActuel importé
                 if (typeof backupData.notes === 'string') {
                   const day = String(backupData.jourActuel || 1);
-                  localStorage.setItem(STORAGE_PREFIX + 'envol_notes_by_day', JSON.stringify({ [day]: backupData.notes }));
+                  lsSet('notes_by_day', JSON.stringify({ [day]: backupData.notes }));
                 } else if (typeof backupData.notes === 'object') {
                   // Si c'était déjà un map -> on le reprend tel quel
-                  localStorage.setItem(STORAGE_PREFIX + 'envol_notes_by_day', JSON.stringify(backupData.notes));
+                  lsRemove('notes_by_day');
                 }
               } else {
-                localStorage.removeItem('envol_notes_by_day');
+                lsRemove('notes_by_day');
               }
-              
+
               // (Optionnel) on supprime l’ancienne clé si tu veux éviter la confusion
-              localStorage.removeItem('envol_notes');
-              
+              lsRemove('notes');
+
               alert('✅ Progression importée !');
               window.location.reload();
               }
@@ -1094,47 +1140,51 @@ function setNoteForDay(day, text) {
         };
         input.click();
       });
-  
+
       // 6. SUPPRIMER PROGRESSION
       document.getElementById('reset-progress-btn')?.addEventListener('click', function() {
-        if (!confirm('ÊTES-VOUS ABSOLUMENT SÛR ?\n\nTous vos défis validés seront effacés !')) return;
-        if (!confirm('DERNIÈRE CHANCE : "Annuler" pour garder, "OK" pour supprimer.')) return;
+        if (!confirm(`ÊTES-VOUS ABSOLUMENT SÛR ?\n\nToute la progression du programme ${APP_NAME} sera effacée.`)) return;
+        if (!confirm(`DERNIÈRE CHANCE : "Annuler" pour garder ${APP_NAME}, "OK" pour supprimer.`)) return;
+
         window.DEFIS.forEach(defi => {
           defi.termine = false;
           defi.dateValidation = null;
         });
-        localStorage.setItem(STORAGE_PREFIX + 'defis_envol', JSON.stringify(window.DEFIS));
-        localStorage.setItem(STORAGE_PREFIX + 'jour_actuel', '1');
-        
-        // Correction bug jour 1 manqué après reset
+
+        if (typeof saveProgression === 'function') saveProgression();
+
+        lsSet('jour_actuel', '1');
+
         const aujourdhui = new Date().toLocaleDateString('fr-FR');
-        localStorage.setItem(STORAGE_PREFIX + 'dernier_changement_jour', aujourdhui);
-        
-        localStorage.setItem(STORAGE_PREFIX + 'heure_notification', '08:00');
-        localStorage.removeItem('install_prompt_shown');
-        // ✅ Reset des défis rattrapés (sinon le calendrier garde des jours jaunes)
-        localStorage.setItem(STORAGE_PREFIX + 'defis_madeup', JSON.stringify([]));
-        alert('🗑️ Progression supprimée.');
+        lsSet('dernier_changement_jour', aujourdhui);
+        lsSet('dernier_acces', aujourdhui);
+        lsSet('heure_notification', '08:00');
+        lsSet('defis_madeup', JSON.stringify([]));
+        lsSet('notes_by_day', JSON.stringify({}));
+        lsRemove('notes');
+        lsRemove('install_prompt_shown');
+
+        alert(`🗑️ Progression ${APP_NAME} supprimée.`);
         window.location.reload();
       });
 
-    
+
 
       // ========== EXPORTS DEBUG (dans le bon scope) ==========
       window.verifierEtAvancerJour = verifierEtAvancerJour;
       window.peutPasserAuJourSuivant = peutPasserAuJourSuivant;
-      
+
       console.log('🔧 Exports debug (initApp):', {
         verifierEtAvancerJour: typeof window.verifierEtAvancerJour,
         peutPasserAuJourSuivant: typeof window.peutPasserAuJourSuivant
       });
-      
+
       // ========== INITIALISATION FINALE ==========
 
       // On vérifie d'abord le jour avant d'avancer :
       verifierEtAvancerJour();
 
-      const jourActuelApresSync = parseInt(localStorage.getItem('jour_actuel'), 10) || 1;
+      const jourActuelApresSync = parseInt(lsGet('jour_actuel', '1'), 10) || 1;
       afficherDefiDuJour(jourActuelApresSync);
       
       showDailyWakeNotificationIfNeeded().then(ok => console.log('🔔 Notif wake envoyée ?', ok));

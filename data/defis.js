@@ -1,0 +1,867 @@
+// data/defis.js
+
+// Compat : certains morceaux attendent encore DefisEnvol
+window.DefisEnvol = window.DefisEnvol || window.DEFIS || DefisEnveloppe;
+
+const DefisOrigine = [
+  {
+    jour: 1,
+    titre: "Prends un moment pour observer tes habitudes alimentaires actuelles",
+    description: "Aujourd’hui, note ce que tu manges, quand tu manges et pourquoi tu manges. Commence par être simplement conscient de tes habitudes sans jugement.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 2,
+    titre: "Mange en silence",
+    description: "Lors de ton repas principal, éteins toute distraction (téléphone, TV) et mange en silence. Concentre-toi uniquement sur les saveurs, les textures et les sensations.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 3,
+    titre: "Prends conscience de ta faim",
+    description: "Avant chaque repas, prends une minute pour évaluer ton niveau de faim sur une échelle de 1 à 10. Cela t'aidera à mieux comprendre tes besoins réels.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 4,
+    titre: "Introduis une pause de gratitude avant de manger",
+    description: "Avant de commencer ton repas, prends un moment pour te sentir reconnaissant pour la nourriture devant toi. Cela peut t'aider à te connecter plus profondément à ton repas.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 5,
+    titre: "Mastique lentement et longuement",
+    description: "Aujourd’hui, concentre-toi sur la mastication. Essaie de mâcher chaque bouchée au moins 20 fois avant d’avaler. Observe comment cela change ton expérience de la nourriture.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 6,
+    titre: "Change ton environnement de repas",
+    description: "Si tu le peux, mange dans un endroit différent. Ce changement de cadre peut t’aider à sortir de la routine et à te concentrer sur le moment présent.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 7,
+    titre: "Remplace une collation transformée par un aliment entier",
+    description: "Choisis une collation que tu as l’habitude de consommer et remplace-la par un fruit, des noix ou des légumes crus. Note comment tu te sens après.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 8,
+    titre: "Observe les émotions liées à ton alimentation",
+    description: "Avant de manger, prends un moment pour te demander ce que tu ressens. Manges-tu par faim ou pour apaiser une émotion ? Identifie ces émotions sans les juger.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 9,
+    titre: "Fais une mini-méditation avant de manger",
+    description: "Avant de commencer ton repas, prends 2-3 minutes pour respirer profondément et te recentrer. Cette pratique peut améliorer ta digestion et ton état d’esprit.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 10,
+    titre: "Découvre l'impact des saveurs",
+    description: "Concentre-toi aujourd’hui sur les différentes saveurs de ton repas (sucré, salé, acide, amer, piquant). Essaie de repérer comment chaque saveur influence ton appétit et tes émotions.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 12,
+    titre: "Identifie les déclencheurs de tes envies alimentaires",
+    description: "Aujourd’hui, fais attention à ce qui déclenche tes envies de manger (stress, ennui, pub TV). Note ces déclencheurs pour mieux les comprendre.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 13,
+    titre: "Pratique le jeûne intermittent sur une courte période",
+    description: "Essaye de retarder ton petit-déjeuner de quelques heures ou d’avancer ton dîner. Observe comment cela affecte ta faim et ton énergie.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 14,
+    titre: "Bois un verre d’eau avant chaque repas",
+    description: "Avant de manger, bois un grand verre d’eau. Cela peut t’aider à différencier la faim de la soif et à réduire les excès alimentaires.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 15,
+    titre: "Prépare un repas avec une intention consciente",
+    description: "Aujourd’hui, prépare ton repas avec une intention particulière, comme nourrir ton corps, te faire plaisir, ou te détendre. Concentre-toi sur chaque étape de la préparation.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 16,
+    titre: "Fais une marche de pleine conscience après le repas",
+    description: "Après ton repas principal, prends 10-15 minutes pour marcher lentement et digérer. Concentre-toi sur ta respiration et tes sensations corporelles.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 17,
+    titre: "Expérimente avec un repas végétarien",
+    description: "Choisis de manger un repas végétarien aujourd’hui. Note comment ton corps réagit et comment tu te sens mentalement après ce changement.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 18,
+    titre: "Ecoute ton corps pour savoir quand arrêter de manger",
+    description: "Aujourd’hui, mange lentement et écoute ton corps pour savoir quand il est temps d’arrêter. Arrête-toi avant de te sentir complètement plein et observe les sensations qui en découlent.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 19,
+    titre: "Note tes ressentis après chaque repas",
+    description: "Prends quelques minutes après chaque repas pour noter comment tu te sens physiquement et émotionnellement. Cela t’aidera à faire le lien entre ce que tu manges et ton bien-être général.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 20,
+    titre: "Limite les aliments transformés",
+    description: "Fais de ton mieux pour éviter les aliments transformés aujourd’hui. Concentre-toi sur les aliments entiers et non transformés, et note les différences dans tes sensations.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 21,
+    titre: "Crée ton rituel de repas en pleine conscience",
+    description: "Compile toutes les pratiques que tu as apprises au cours des 20 derniers jours et crée ton propre rituel de repas en pleine conscience. Engage-toi à continuer ce rituel au-delà de ce défi.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 22,
+    titre: "Célèbre ta transformation !",
+    description: "Fais-toi une lettre de gratitude pour mettre sur le papier tout ce que tu faisais avant de commencer ce défi et ce qui change ton quotidien maintenant : c’est le moment du bilan !\n\nN'hésite pas à me la partager ou même partager ton expérience sur le groupe Facebook si le cœur t'en dit !\n\nTu peux être fièr.e de ce que tu as réalisé au cours des trois dernières semaines !!",
+    termine: false,
+    dateValidation: null
+  }
+];
+
+const DefisEnveloppe = [
+  {
+    jour: 1,
+    titre: "Ancrage olfactif",
+    description: "Choisis une odeur qui t’apaise (encens, huile essentielle, tisane) et respire-la quelques instants en conscience.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 2,
+    titre: "Espace ressource",
+    description: "Identifie un coin de ta maison où tu te sens bien. Passe 3 minutes là-bas, sans rien faire, juste ressentir.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 3,
+    titre: "Mantra de sécurité",
+    description: "Écris une phrase courte qui t’évoque la sécurité. Murmure-la 3 fois dans ta tête en t’asseyant calmement.\n\nPar exemple : \"J’ai tout ce dont j’ai besoin et même plus. Je suis en sécurité\"",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 4,
+    titre: "Informe ton eau",
+    description: "Bois un verre d’eau en posant une intention douce avant la première gorgée.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 5,
+    titre: "Cocon intérieur",
+    description: "Ferme les yeux 2 minutes dans un lieu neutre et imagine que tu te replies dans un cocon doux.\n\nSi tu es sensible aux textures, le contact d’un pled ou d’une peluche peut t’aider.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 6,
+    titre: "Mini-autel d’ancrage",
+    description: "Crée un mini-autel (bougie, pierre, objet symbolique) dans un recoin de ton espace. Il te représente.\n\nPrend ensuite une à plusieurs minutes pour en profiter et l’admirer.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 7,
+    titre: "Massage des racines",
+    description: "Masse-toi les pieds pendant 1 à 2 minutes avec de l’huile. Ressens les zones sensibles.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 8,
+    titre: "Application consciente",
+    description: "Applique de l’huile sur tes bras ou ton ventre en conscience, même brièvement.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 9,
+    titre: "Préparation du rituel",
+    description: "Prépare ton bol ou ta bouteille d’huile pour les prochains jours et observe l’effet que cela te fait. Tu peux également attribuer une serviette de bain à ce moment, afin d’éviter de mettre de l’huile sur tes draps ou ton canapé.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 10,
+    titre: "Odeur ressource",
+    description: "Choisis une huile essentielle qui te fait du bien et respire-la profondément 3 fois, les yeux fermés.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 11,
+    titre: "Cartographie corporelle",
+    description: "Dessine mentalement ton corps. Quelles zones appellent le contact ou le soin aujourd’hui ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 12,
+    titre: "Toucher du visage",
+    description: "Masse doucement ton visage. Observe ton regard dans le miroir avant et après.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 13,
+    titre: "Poids et contact",
+    description: "Allonge-toi 3 minutes. Observe les zones de ton corps qui touchent le sol, le tapis ou ton lit. Ressent leur contact avec la surface où tu es allongé.e.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 14,
+    titre: "Centre lumineux",
+    description: "Porte ton attention sur ton sternum. Qu’est-ce qui y vit aujourd’hui ? Vide, tension, calme ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 15,
+    titre: "Repos profond",
+    description: "Après un massage ou une douche, reste allongé.e pendant 3 minutes en profitant de la détente. Laisse le corps intégrer.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 16,
+    titre: "Présence neutre",
+    description: "Ferme les yeux. Ressens ton corps tel qu’il est, sans rien modifier.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 17,
+    titre: "Respiration témoin",
+    description: "Observe ta respiration naturelle. Sens-la, sans l’influencer.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 18,
+    titre: "Refuge intérieur",
+    description: "Invente un lieu-refuge imaginaire. Quels sont ses sons, ses couleurs, ses odeurs ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 19,
+    titre: "Marche sensorielle",
+    description: "Marche 5 minutes pour sentir le contact du sol sous tes pieds.\n\nConcentre-toi sur la détente et le relâchement provoqué par ce contact.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 20,
+    titre: "Vague pelvienne",
+    description: "Assis.e ou debout, balance ton bassin en rythme avec ton souffle pendant 1 à 3 minutes.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 21,
+    titre: "Mouvement souvenir",
+    description: "Reproduis un geste spontané ou dansé qui t’a déjà fait du bien.\n\nPas besoin de réfléchir : observe juste le mouvement que ton corps a envie de faire spontanément après avoir lu ce papier.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 22,
+    titre: "Main aérienne",
+    description: "Bouge une main lentement dans l’espace. Regarde-la comme une plume et « touche l’air ».\n\nTu peux le faire sur une musique qui t’apaise ou sur une bande son de fréquence alpha ou têta.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 23,
+    titre: "Danse assise",
+    description: "Laisse une musique douce inspirer un mouvement, même discret.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 24,
+    titre: "Fluidité aquatique",
+    description: "Dans l’eau ou sous la douche, explore une sensation de légèreté et de glissement.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 25,
+    titre: "Mouvement intuitif",
+    description: "Avec une musique douce, laisse naître un mouvement spontané. Il peut être ample, lent, ou infime : l’important est que tu sentes quelque chose bouger en toi.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 26,
+    titre: "Transe express",
+    description: "Ferme les yeux et bouge librement pendant une minute, sans réfléchir.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 27,
+    titre: "Ambiance sacrée",
+    description: "Tamises la lumière, allume une bougie, puis laisse ton corps bouger comme il le souhaite.\n\nSi un fond sonore t’aide, immerge-toi dans une musique qui te porte.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 28,
+    titre: "Répétition libératrice",
+    description: "Rejoue un geste que ton corps fait souvent quand il est tendu. Exagère-le, puis relâche-le.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 29,
+    titre: "Souffle initiateur",
+    description: "Laisse ton souffle guider un mouvement fluide, même minuscule ou intérieur. Ressens la détente de tes zones de tension.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 30,
+    titre: "Cercle de clôture",
+    description: "Refais une danse intuitive libre. À la fin, écris 3 mots qui traduisent ton état.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 31,
+    titre: "Nouveau départ",
+    description: "Fais-toi une lettre de gratitude pour mettre sur le papier tout ce que tu faisais avant de commencer ce défi et ce qui te rend à présent plus conscient.e de ton corps et de tes besoins propres : c'est le moment du bilan !\nC'est aussi le moment idéal pour te remercier d'avoir pris soin de toi et d'avoir choisi la route de ta propre écoute 🩷\n Tu as fait un chemin formidable ! Un pas après l'autres, tu as continué d'avancer. Félicitations !",
+    termine: false,
+    dateValidation: null
+  }
+];
+
+const DefisEmergence = [
+  {
+    jour: 1,
+    titre: "La posture de l’explorateur",
+    description: "Pose-toi un instant dans n’importe quel environnement. Observe quel sens s’active en premier : la vue, l’ouïe, l’odorat, le toucher, ou le ressenti interne.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 2,
+    titre: "Écouter sans interpréter",
+    description: "Pendant 2 minutes, écoute les sons autour de toi sans les nommer. Laisse-les simplement te traverser.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 3,
+    titre: "Voir autrement",
+    description: "Choisis un objet banal. Observe-le comme si tu ne l’avais jamais vu. Formes, textures, couleurs.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 4,
+    titre: "Le toucher conscient",
+    description: "Sens un contact simple (vêtement, sol, air sur la peau). Reste avec la sensation sans chercher à la modifier.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 5,
+    titre: "L’odeur comme ancrage",
+    description: "Prends conscience d’une odeur aujourd’hui. Note ce qu’elle évoque dans ton corps, pas dans ta tête.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 6,
+    titre: "Le goût présent",
+    description: "Mange quelque chose lentement, en silence si possible. Observe ce que ça fait avant que le mental ne juge.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 7,
+    titre: "Trop ou pas assez",
+    description: "Observe aujourd’hui si un sens est sur-sollicité ou mis à distance. Sans corriger, juste constater.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 8,
+    titre: "L’hypersensibilité apprivoisée",
+    description: "Quand une stimulation te semble “trop”, demande-toi : est-ce le stimulus ou mon état intérieur ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 9,
+    titre: "Le refuge sensoriel",
+    description: "Identifie une sensation qui t’apaise naturellement. Garde-la comme repère.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 10,
+    titre: "Le sens oublié",
+    description: "Porte ton attention sur le sens que tu utilises le moins habituellement.",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 11,
+    titre: "Hacker l’inconscient par le corps",
+    description: "Observe comment une simple sensation modifie ton état intérieur sans effort.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 12,
+    titre: "Démystifier l’hypnose",
+    description: "Observe un moment où tu es “absorbé.e” naturellement (lecture, musique, mouvement).",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 13,
+    titre: "Plongée sensorielle",
+    description: "Choisis une sensation agréable. Plonge dedans 2 minutes.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 14,
+    titre: "Action inconsciente",
+    description: "Observe comment cette sensation modifie ton souffle ou ta posture.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 15,
+    titre: "Approcher l’inconfort",
+    description: "Identifie une sensation légèrement désagréable. Observe-la sans lutter.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 16,
+    titre: "Lâcher prise total",
+    description: "Crée-toi un instant de solitude dans un environnement où personne ne te dérangera. Soupire un grand coup et laisse-toi envahir par un grand « vide plein ». Autorise-toi à ne rien changer à cette sensation. Juste être là.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 17,
+    titre: "Évolution spontanée",
+    description: "Comme hier, offre-toi un moment de solitude régénérante et choisis de te déconnecter de ton environnement. Observe si ta sensation interne évolue d’elle-même pendant 5 minutes.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 18,
+    titre: "Respiration et relaxation",
+    description: "Respire 9 fois (inspire par le nez, expire par la bouche) en prenant conscience du mouvement de tes poumons. Notes-tu une détente dans ton dos ? Un apaisement ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 19,
+    titre: "Intégration douce",
+    description: "Accorde-toi un temps de repos conscient.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 20,
+    titre: "Se souvenir",
+    description: "Note un fragment de rêve ou une image marquante au réveil. Ça peut aussi être des sensations ou images qui persistent dans ta tête.",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 21,
+    titre: "Première sensation de la journée",
+    description: "Que ressens-tu en émergeant le matin ou en repensant au rêve que tu as fait ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 22,
+    titre: "Noter et comprendre",
+    description: "Si tu as rêvé cette nuit, note ton rêve avec un maximum de détails. Tu peux l’interpréter et avoir une piste d’interprétation extérieure via le prompt que je t’ai donné pour ChatGPT.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 23,
+    titre: "Schéma répétitif",
+    description: "Si tu rêves, note s’il y a un schéma répétitif dans les trames de tes rêves : tu fuis, voles, explores des lieux ?… Te retrouves-tu dans des lieux différents ou toujours dans le même type d’ambiance ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 24,
+    titre: "Écriture automatique",
+    description: "Donne-toi 5 minutes pour écrire ce que tu as sur le cœur à l’instant T : positif ou négatif, peu importe. Le but est que tes émotions s’organisent sous forme de mots conscients.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 25,
+    titre: "Laisser infuser",
+    description: "Ne cherche aucune réponse aujourd’hui.\n\nCueille le jour 💛",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 26,
+    titre: "Répétitions",
+    description: "Observe un motif récurrent (dans les rêves ou la vie).",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 27,
+    titre: "Dialogue inconscient (plongée)",
+    description: "Pose une question intérieure avant de dormir.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 28,
+    titre: "Dialogue inconscient (émergence)",
+    description: "Au réveil, observe l’état de ton corps et de tes envies.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 29,
+    titre: "Accueillir sans comprendre",
+    description: "N’importe quand dans ta journée, arrête de bouger un instant et ressens les mouvements internes de ton corps. Accepte de ne pas comprendre, plonge dans tes sensations.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 30,
+    titre: "Intégration",
+    description: "Regarde-toi dans le miroir et plonge dans ton propre regard.\n\nAs-tu la sensation de te voir ou de regarder un.e étranger.ère ?",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 31,
+    titre: "Immobile et présent.e",
+    description: "Allonge-toi et observe le poids de ton corps.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 32,
+    titre: "Respiration et détente",
+    description: "Laisse la respiration te guider sans la contrôler.\n\nTu peux être allongé.e, debout ou en mouvement.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 33,
+    titre: "Marcher en conscience",
+    description: "Observe les appuis de tes pieds en marchant.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 34,
+    titre: "Hypnose en mouvement",
+    description: "Choisis une activité douce et reste dans les sensations.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 35,
+    titre: "Danse minimale",
+    description: "Tiens-toi debout, les pieds à la largeur de tes épaules. Laisse ton corps bouger spontanément, même très peu.\n\nAccueille les sensations que ces micro-mouvements créent dans ta psyché et ton corps.",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 36,
+    titre: "Les mouvements inconscients",
+    description: "Observe un geste spontané dans ta journée. Quels gestes fais-tu automatiquement sans y avoir pensé ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 37,
+    titre: "Oui / Non corporel",
+    description: "Ressens comment ton corps réagit à une question simple. Il doit pouvoir y répondre par « oui » ou par « non ».",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 38,
+    titre: "Aller au-delà",
+    description: "Pose-toi une question dans ta tête. Ressens-la en toi et lâche prise sur la réponse. Reste dans l’observation de la réponse. Ton corps répond par sensations.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 39,
+    titre: "Les images intérieures",
+    description: "Observe une image ou une sensation qui t’apparaît spontanément.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 40,
+    titre: "Art et inconscient",
+    description: "Regarde une création comme si elle te parlait de toi.",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 41,
+    titre: "Pause intégrative",
+    description: "Lâche prise sur le passé et le futur. Vis la journée d’aujourd’hui comme si c’était la seule de ta vie.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 42,
+    titre: "Nommer les interférences",
+    description: "Observe une pensée intrusive qui draine ton énergie. D’où vient-elle ? De toi, de la société ou de quelqu’un de précis dans ton entourage ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 43,
+    titre: "Peur ou intuition ?",
+    description: "Choisis un thème qui provoque de la peur en toi. Ressens la différence entre réelle peur ou intuition dans le corps.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 44,
+    titre: "Brouillage émotionnel",
+    description: "Quand es-tu le plus perméable ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 45,
+    titre: "Dissoudre sans combattre",
+    description: "Si tu ressens un stress aujourd’hui, prends une grande inspiration consciente. Laisse couler l’origine du stress et observe-la avec recul.",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 46,
+    titre: "Clarté intérieure",
+    description: "Observe quand une réponse est fluide. Comment réagit ton corps ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 47,
+    titre: "L’intégrité",
+    description: "Dis ou fais quelque chose d’aligné, même simplement.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 48,
+    titre: "Posture juste",
+    description: "Ni fuite, ni lutte.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 49,
+    titre: "Repère interne",
+    description: "Dans ta journée, choisis un moment pour te retrouver seul.e. Respire consciemment.\n\nIdentifie ton repère de calme interne. Ressens cette posture dans ton corps.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 50,
+    titre: "Se prémunir naturellement",
+    description: "Observe ce qui t’éloigne de toi.",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 51,
+    titre: "Revenir au centre",
+    description: "Si tu sens un déséquilibre intérieur, utilise ton repère interne.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 52,
+    titre: "Stabilisation",
+    description: "Note ce qui a changé en toi au cours des dernières semaines.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 53,
+    titre: "Le pendule comme miroir",
+    description: "Choisis un pendule et tiens sa chaînette en le laissant pendre dans le vide. Observe ses mouvements et l’évolution de ton état intérieur, sans rechercher de réponse.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 54,
+    titre: "Image qui appelle",
+    description: "Choisis une image qui “te fait quelque chose”.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 55,
+    titre: "Couleurs et formes",
+    description: "Observe sans interpréter.",
+    termine: false,
+    dateValidation: null
+  },
+
+  {
+    jour: 56,
+    titre: "Sans forcer",
+    description: "Prends conscience du moment où tu t’arrêtes d’être actif.ve dans ta journée. Passe en mode « observateur » de tes pensées et émotions.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 57,
+    titre: "Tirage intuitif",
+    description: "Choisis un jeu de cartes visuel comme l’« Oracle des Mille Lys ».\n\nDispose les cartes librement et laisse-toi traverser par les sensations que ton inconscient provoque en toi.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 58,
+    titre: "Ce qui est caché",
+    description: "Choisis un jeu de cartes visuel comme l’« Oracle des Mille Lys ».\n\nDispose les cartes librement et observe une carte partiellement dissimulée. Comment réagit ton corps face à cette image ?",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 59,
+    titre: "Soutien à l’interprétation",
+    description: "Observe une image qui te fait un effet particulier ou choisis une carte d’un jeu visuel tel que l’« Oracle des Mille Lys ».\n\nObserve tes ressentis et utilise le prompt ChatGPT que je t’ai donné pour approfondir ta recherche interne. Laisse infuser sans tirer de conclusion.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 60,
+    titre: "Immobilité consciente",
+    description: "Allonge-toi et écoute.\n\nVisualise l’espace qui s’ouvre à l’expiration.\n\nConcentre-toi sur un vide plein. Chasse les pensées, laisse-toi envahir par le vide.\n\nIl ne restera qu’une petite lumière en toi : laisse-toi immerger dans les sensations qu’elle t’offre.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 61,
+    titre: "Invoquer « ta lumière »",
+    description: "Prends un moment dans ta journée pour retrouver la même lumière qu’hier. Tu peux refaire la même expérience qu’hier ou, si la sensation est encore bien présente, rechercher cette sensation pendant la journée.",
+    termine: false,
+    dateValidation: null
+  },
+  {
+    jour: 62,
+    titre: "Nouveau départ",
+    description: "Fais-toi une lettre de gratitude pour mettre sur le papier tout ce que tu faisais avant de commencer ce défi et ce qui te rend à présent plus conscient.e de ton corps et de tes besoins propres : c'est le moment du bilan !\nC'est aussi le moment idéal pour te remercier d'avoir pris soin de toi et d'avoir choisi la route de ta propre écoute 🩷\n Tu as fait un chemin formidable ! Un pas après l'autres, tu as continué d'avancer. Félicitations !",
+    termine: false,
+    dateValidation: null
+  }
+];
+
+
+// Fonction utilitaire pour obtenir le défi d'un jour
+function getDefiByDay(jourNumero) {
+  return window.DEFIS.find(defi => defi.jour === jourNumero) || window.DEFIS[0];
+}
+
+// Sauvegarde la progression dans le localStorage
+function saveProgression() {
+  localStorage.setItem(`${window.APP_ID}_defis_progression`, JSON.stringify(window.DEFIS));
+}
+
+// Charge la progression depuis le localStorage
+function loadProgression() {
+  const sauvegarde = localStorage.getItem(`${window.APP_ID}_defis_progression`);
+  if (sauvegarde) {
+    const defisSauves = JSON.parse(sauvegarde);
+    defisSauves.forEach((defiSauve, index) => {
+      if (window.DEFIS[index]) {
+        window.DEFIS[index].termine = defiSauve.termine;
+        window.DEFIS[index].dateValidation = defiSauve.dateValidation;
+      }
+    });
+  }
+}
+
+// Initialise l'app au premier lancement
+function initializeApp() {
+  if (!localStorage.getItem(`${window.APP_ID}_app_initialisee`)) {
+    localStorage.setItem(`${window.APP_ID}_app_initialisee`, 'true');
+    localStorage.setItem(`${window.APP_ID}_jour_actuel`, '1');
+    localStorage.setItem(`${window.APP_ID}_heure_notification`, '09:00');
+    saveProgression();
+  }
+  loadProgression();
+}
+
+window.DEFIS_BY_APP = {
+  origine: DefisOrigine,
+  enveloppe: DefisEnveloppe,
+  emergence: DefisEmergence
+};
+
+window.DEFIS = window.DEFIS_BY_APP[window.APP_ID];
+
+// quand l'utilisateur choisira un défi, il faudra faire :
+// window.DEFIS = window.DEFIS_BY_APP[APP_ID];

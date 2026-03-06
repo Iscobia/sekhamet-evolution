@@ -774,7 +774,7 @@ function verifierEtAvancerJour() {
 // ===== Notes (stockées localement) =====
 const NOTES_KEY = 'notes';
 
-function getAllNotes() {function getAllNotes() {
+function getAllNotes() {
   try { return JSON.parse(lsGet(NOTES_KEY, '{}')); }
   catch { return {}; }
 }
@@ -1286,9 +1286,9 @@ setTimeout(() => {
     console.warn('⚠️ OneSignal non disponible - notifications désactivées');
   }
 }, 3000);
-    
 
-});
+
+};
 
 //============ FIN DU DOM CONTENT LOADED ===================
 

@@ -827,7 +827,7 @@ const DefisEmergence = [
 
 // Fonction utilitaire pour obtenir le défi d'un jour
 function getDefiByDay(jourNumero) {
-  return window.DEFIS.find(defi => defi.jour === jourNumero) || window.DEFIS[0];
+  return window.DEFIS.find(defi => defi.jour === jourNumero) || null;
 }
 
 // Sauvegarde la progression dans le localStorage

@@ -1087,14 +1087,16 @@ function setNoteForDay(day, text) {
       // 4. EXPORTER SAUVEGARDE
       document.getElementById('export-backup-btn')?.addEventListener('click', function() {
         const backupData = {
-          version: '1.0',
-          timestamp: new Date().toISOString(),
-          progression: JSON.parse(lsGet('defis_progression', '[]')),
-          jourActuel: lsGet('jour_actuel', '1'),
-          dernierChangement: lsGet('dernier_changement_jour', null),
-          heureNotification: lsGet('heure_notification', '08:00'),
-          notesByDay: JSON.parse(lsGet('notes_by_day', '{}')),
-        };
+        version: '1.0',
+        appId: APP_ID,
+        appName: APP_NAME,
+        timestamp: new Date().toISOString(),
+        progression: JSON.parse(lsGet('defis_progression', '[]')),
+        jourActuel: lsGet('jour_actuel', '1'),
+        dernierChangement: lsGet('dernier_changement_jour', null),
+        heureNotification: lsGet('heure_notification', '08:00'),
+        notesByDay: JSON.parse(lsGet('notes_by_day', '{}')),
+      };
         const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1121,6 +1123,10 @@ function setNoteForDay(day, text) {
           reader.onload = function(event) {
             try {
               const backupData = JSON.parse(event.target.result);
+              if (backupData.appId && backupData.appId !== APP_ID) {
+                alert(`⚠️ Cette sauvegarde appartient au programme ${backupData.appId}, pas à ${APP_ID}.`);
+                return;
+              }
               if (!backupData.progression || !backupData.jourActuel) throw new Error('Format invalide');
               if (confirm(`Importer la sauvegarde du ${new Date(backupData.timestamp).toLocaleDateString('fr-FR')} ?`)) {
               lsSet('defis_progression', JSON.stringify(backupData.progression));

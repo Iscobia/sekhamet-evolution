@@ -7,6 +7,9 @@ const isSafari = /Safari/i.test(userAgent) && !/Chrome/i.test(userAgent);
 const APP = window.APP_CONFIG || {};
 const APP_ID = APP.ID || "app";
 const APP_NAME = APP.NAME || "APP";
+console.log("APP_ID:", APP_ID);
+console.log("APP_NAME:", APP_NAME);
+console.log("DEFIS LOADED:", window.DEFIS?.length);
 
 // Cache name isolé par app (utile surtout pour Service Worker / caches)
 const CACHE_NAME = APP.CACHE_NAME || `${APP_ID}-pwa-v1`;
@@ -26,16 +29,50 @@ function lsRemove(k) { localStorage.removeItem(storageKey(k)); }
 let jourActuel = parseInt(lsGet('jour_actuel', '1'), 10) || 1;
 let jourAffiche = jourActuel;
 
+// === On choisi le programme à montrer :
+
+function renderProgramSelector() {
+  const container = document.getElementById("program-selector");
+  if (!container) return;
+
+  const programs = [
+    { id: "origine", label: "ORIGINE - Alimentation consciente" },
+    { id: "enveloppe", label: "ENVELOPPE - Retour à Soi par le corps" },
+    { id: "emergence", label: "EMERGENCE - Ton inconscient comme allié" }
+  ];
+
+  container.innerHTML = "";
+
+  programs.forEach(program => {
+    const button = document.createElement("button");
+    button.textContent = program.label;
+    button.type = "button";
+
+    if (program.id === window.APP_ID) {
+      button.disabled = true;
+    }
+
+    button.addEventListener("click", () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set("app", program.id);
+      window.location.href = url.toString();
+    });
+
+    container.appendChild(button);
+  });
+}
+
 // === On attend que envol-notifications.js soit chargé :
 
 // Au début de app.js
 console.log('🔔 app.js chargement...');
 
-// Attendre que envol-notifications.js soit prêt
+// Attendre que notifications.js soit prêt
 function initApp() {
   console.log('🔔 Initialisation app...');
-  
-  // Vos fonctions existantes
+
+  renderProgramSelector();
+
   if (typeof setupNotificationUI === 'function') {
     console.log('✅ notifications disponibles');
   }
@@ -48,7 +85,9 @@ if (document.readyState === 'loading') {
   setTimeout(initApp, 1000); // Donner du temps à envol-notifications.js
 }
 
-
+console.log("APP_ID:", APP_ID);
+console.log("APP_NAME:", APP_NAME);
+console.log("DEFIS LOADED:", window.DEFIS?.length);
 
 
 // ========== FONCTIONS GÉRANT ONESIGNAL ==========
@@ -179,11 +218,11 @@ function showInstallOverlay() {
   overlay.innerHTML = `
     <div style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
       <div style="background:white; padding:30px; border-radius:20px; max-width:400px; text-align:center;">
-        <h2>Installer `${APP_NAME}` ?</h2>
+        <h2>Installer ${APP_NAME} ?</h2>
         <p>Pour un accès rapide depuis ton écran d'accueil,</p>
         <div id="install-instructions">
           <p>👇🏻 clique sur le bouton jaune👇🏻</p>
-          <p>"📱 Installer `${APP_NAME}` sur l'écran d'accueil"</p>
+          <p>"📱 Installer ${APP_NAME} sur l'écran d'accueil"</p>
           <p>ou</p>
           <p><strong>Android :</strong> Menu → "Ajouter à l'écran d'accueil"</p>
           <p><strong>iOS :</strong> Partager → "Sur l'écran d'accueil"</p>
@@ -509,7 +548,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (diffJours > 0) {
         // Marquer les jours passés comme manqués (sauf si déjà fait ou rattrapé)
-        for (let i = 0; i < diffJours && jourActuel + i <= 77; i++) {
+        for (let i = 0; i < diffJours && jourActuel + i <= APP.TOTAL_DAYS; i++) {
           const jourAMarquer = jourActuel + i;
           const defi = getDefiByDay(jourAMarquer);
           
@@ -638,13 +677,13 @@ function verifierEtAvancerJour() {
         console.log('📅 [DEBUG] Différence réelle en jours:', diffJours);
 
         if (diffJours > 0) {
-          const nouveauJour = Math.min(77, jourActuel + diffJours);
+          const nouveauJour = Math.min(APP.TOTAL_DAYS, jourActuel + diffJours);
           if (nouveauJour !== jourActuel) {
             jourActuel = nouveauJour;
             localStorage.setItem(STORAGE_PREFIX + 'jour_actuel', String(jourActuel));
             console.log(`🎯 AVANCÉ de ${diffJours} jour(s) -> jour_actuel:`, jourActuel);
           } else {
-            console.log('⏸️ Déjà au max (77), pas d’avancement');
+            console.log('⏸️ Déjà au max (APP.TOTAL_DAYS), pas d’avancement');
           }
 
           // Important : on met à jour la date de référence
@@ -809,7 +848,7 @@ function setNoteForDay(day, text) {
       initMadeupDefis();
       const madeupDefis = JSON.parse(localStorage.getItem('defis_madeup') || '[]');
       
-      for (let jour = 1; jour <= 77; jour++) {
+      for (let jour = 1; jour <= APP.TOTAL_DAYS; jour++) {
         const defi = getDefiByDay(jour);
         const dayElement = document.createElement('div');
         dayElement.className = 'calendar-day';

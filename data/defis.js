@@ -1,7 +1,5 @@
 // data/defis.js
 
-// Compat : certains morceaux attendent encore DefisEnvol
-window.DefisEnvol = window.DefisEnvol || window.DEFIS || DefisEnveloppe;
 
 const DefisOrigine = [
   {

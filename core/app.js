@@ -1279,6 +1279,8 @@ function setNoteForDay(day, text) {
         if (!confirm(`ÊTES-VOUS ABSOLUMENT SÛR ?\n\nToute la progression du programme ${APP_NAME} sera effacée.`)) return;
         if (!confirm(`DERNIÈRE CHANCE : "Annuler" pour garder ${APP_NAME}, "OK" pour supprimer.`)) return;
 
+        const wasPaused = isProgressPaused();
+
         window.DEFIS.forEach(defi => {
           defi.termine = false;
           defi.dateValidation = null;
@@ -1296,6 +1298,7 @@ function setNoteForDay(day, text) {
         lsSet('notes_by_day', JSON.stringify({}));
         lsRemove('notes');
         lsRemove('install_prompt_shown');
+        lsSet('progress_paused', wasPaused ? 'true' : 'false');
 
         alert(`🗑️ Progression ${APP_NAME} supprimée.`);
         window.location.reload();
@@ -1315,15 +1318,24 @@ function setNoteForDay(day, text) {
       // ========== INITIALISATION FINALE ==========
 
       // On vérifie d'abord le jour avant d'avancer :
+      // On vérifie d'abord le jour avant d'avancer :
       verifierEtAvancerJour();
 
       const jourActuelApresSync = parseInt(lsGet('jour_actuel', '1'), 10) || 1;
+      jourActuel = jourActuelApresSync;
+      jourAffiche = jourActuelApresSync;
+
+      // Toujours afficher le défi du jour
       afficherDefiDuJour(jourActuelApresSync);
-      
+
+      // Toujours générer le calendrier, même si la progression est en pause
+      if (typeof genererCalendrier === 'function') {
+        genererCalendrier();
+      }
+
       showDailyWakeNotificationIfNeeded().then(ok => console.log('🔔 Notif wake envoyée ?', ok));
 
-      // ✅ Afficher le défi du jour au chargement (le calendrier seul ne remplit pas le panneau)
-      afficherDefiDuJour(jourActuel);
+
 
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {

@@ -23,7 +23,6 @@ function notifLsSet(key, value) {
 
 function isProgressPaused() {
   return notifLsGet('progress_paused', 'false') === 'true';
-  return localStorage.getItem(`${STORAGE_PREFIX}progress_paused`) === 'true';
 }
 
 
@@ -753,13 +752,9 @@ async function programmerNotificationQuotidienne() {
 } // Fin de async function programmerNotificationQuotidienne()
 
   
-async function envoyerNotificationDuJour() {
-  if (isProgressPaused()) {
-  console.log(`⏸️ [Notification ${APP_NAME}] Ignorée : progression en pause`);
-  return;
-  }
+async function envoyerNotificationDuJour(isTest = false) {
   try {
-    if (isProgressPaused()) {
+    if (!isTest && isProgressPaused()) {
       console.log(`⏸️ [Notification ${APP_NAME}] Ignorée : progression en pause`);
       return;
     }

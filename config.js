@@ -7,9 +7,23 @@
 const urlParams = new URLSearchParams(window.location.search);
 const appFromUrl = urlParams.get("app");
 
-const ALLOWED_APP_IDS = ["origine", "enveloppe", "emergence"];
+/* =========================================================
+   CONFIGURATION DES PROGRAMMES À AFFICHER
+   ========================================================= */
 
-window.APP_ID = ALLOWED_APP_IDS.includes(appFromUrl) ? appFromUrl : "enveloppe";
+// CHANGER CETTE VARIABLE pour choisir les pages gérées par l'app :
+// variables possibles : ["origine", "enveloppe", "emergence"]
+// puis quand les paramètres seront entrés "fondement" (pour la mini-app bonus sur la préparation de notre environnement pour bien vivre le programme principal) et éventuellement "envol"
+window.ALLOWED_APP_IDS = ["origine", "enveloppe", "emergence"];
+window.NOTIFICATION_APP_IDS = window.ALLOWED_APP_IDS;
+
+// CHANGER CETTE VARIABLE pour choisir la PAGE PAR DÉFAUT vers laquelle on est redirigé en cas de soucis :
+window.DEFAULT_APP_ID = "enveloppe";
+
+// Programme actif
+window.APP_ID = window.ALLOWED_APP_IDS.includes(appFromUrl)
+  ? appFromUrl
+  : window.DEFAULT_APP_ID;
 
 
 /* =========================================================

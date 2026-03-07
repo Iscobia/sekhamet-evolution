@@ -33,7 +33,7 @@ const DefisOrigine = [
   {
     jour: 5,
     titre: "Mastique lentement et longuement",
-    description: "Aujourd’hui, concentre-toi sur la mastication. Essaie de mâcher chaque bouchée au moins 20 fois avant d’avaler. Observe comment cela change ton expérience de la nourriture.",
+    description: "Aujourd’hui, concentre-toi sur la mastication. Essaie de mâcher chaque bouchée au moins 10 fois avant d’avaler. Observe comment cela change ton expérience de la nourriture.",
     termine: false,
     dateValidation: null
   },
@@ -183,7 +183,7 @@ const DefisEnveloppe = [
   {
     jour: 4,
     titre: "Informe ton eau",
-    description: "Bois un verre d’eau en posant une intention douce avant la première gorgée.",
+    description: "Bois un verre d’eau en posant une intention avant la première gorgée.",
     termine: false,
     dateValidation: null
   },

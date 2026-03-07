@@ -123,28 +123,41 @@ function renderProgramSelector() {
   const container = document.getElementById("program-selector");
   if (!container) return;
 
-  const programs = [
-    {
+  const allowedIds = Array.isArray(window.ALLOWED_APP_IDS) ? window.ALLOWED_APP_IDS : [window.APP_ID];
+
+  const allPrograms = {
+    origine: {
       id: "origine",
       name: "ORIGINE",
       subtitle: "Alimentation consciente",
       themeClass: "theme-origine"
     },
-    {
+    enveloppe: {
       id: "enveloppe",
       name: "ENVELOPPE",
       subtitle: "Retour à Soi par le corps",
       themeClass: "theme-enveloppe"
     },
-    {
+    emergence: {
       id: "emergence",
       name: "EMERGENCE",
       subtitle: "Inconscient allié",
       themeClass: "theme-emergence"
     }
-  ];
+  };
+
+  const programs = allowedIds
+    .map(id => allPrograms[id])
+    .filter(Boolean);
 
   container.innerHTML = "";
+
+  if (programs.length <= 1) {
+    container.style.display = "none";
+    return;
+  }
+
+  container.style.display = "";
   container.className = "program-selector-grid";
 
   programs.forEach(program => {

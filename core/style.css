@@ -1,5 +1,15 @@
 /* style.css - Styles de base */
 /* ========== POLICES PERSONNALISÉES ========== */
+
+/* On importe les styles thématique des theme.css */
+:root {
+  --app-bg: ...;
+  --primary-gradient: ...;
+  --primary-text: ...;
+}
+
+/* =========================================== */
+
 @font-face {
   font-family: 'Amperzand Sekhamet';
   src: url('./assets/fonts/AmperzandSekhamet_ACCENTS.ttf') format('truetype');
@@ -113,7 +123,7 @@ body {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background: linear-gradient(160deg, #0b252f 0%, #0e303d 100%);
+  background: var(--primary-gradient);
   min-height: 100vh;
   padding: 20px;
   color: #333;
@@ -415,7 +425,7 @@ button.madeup {
 }
 
 .secondary-btn {
-  background: linear-gradient(160deg, #0b252f 0%, #0e303d 100%);
+  background: var(--primary-gradient);
   color: white;
   border: none;
   padding: 12px 25px;
@@ -467,7 +477,7 @@ button.madeup {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: linear-gradient(160deg, #0b252f 0%, #0e303d 100%);
+  background: var(--primary-gradient);
   color: white;
   text-decoration: none;
   padding: 15px 30px;
@@ -636,7 +646,7 @@ button.madeup {
   padding: 12px;
 
   margin: 8px 0 30px 0px;
-  background: linear-gradient(160deg, #0e303d 0%, #014055 100%);
+  background: var(secundary-gradient);
   border: none;
   -moz-border-radius: 20px 2px 20px 2px / 20px 2px 20px 2px;
   -webkit-border-radius: 20px 2px 20px 2px / 20px 2px 20px 2px;

@@ -12,6 +12,7 @@ const APP_MAIN_TITLE = APP.MAIN_TITLE || "Mon Défi Quotidien";
 const APP_BROWSER_TITLE = APP.BROWSER_TITLE || `${APP_NAME} - Défi Quotidien`;
 const APP_ICON_192 = APP.ICON_192 || "./core/assets/icons/default-192.png";
 const APP_ICON_512 = APP.ICON_512 || "./core/assets/icons/default-512.png";
+const APP_SUPPORT_URL = APP.SUPPORT_URL || "#";
 
 console.log("APP_ID:", APP_ID);
 console.log("APP_NAME:", APP_NAME);
@@ -96,13 +97,16 @@ function updateBackupWarningNote() {
   const note = document.getElementById('evolution-backup-warning');
   if (!note) return;
 
-  if (INSTALL_APP_NAME === 'EVOLUTION') {
-    note.textContent = `ATTENTION : tu ne sauvegardes ici que ta progression sur ${APP_NAME}. Si tu veux aussi protéger ta progression sur les autres thèmes, exporte-les depuis leurs pages respectives.`;
-    note.style.display = 'block';
-  } else {
+  const allowedIds = Array.isArray(window.ALLOWED_APP_IDS) ? window.ALLOWED_APP_IDS : [window.APP_ID];
+
+  if (allowedIds.length <= 1) {
     note.textContent = '';
     note.style.display = 'none';
+    return;
   }
+
+  note.textContent = `ATTENTION : tu ne sauvegardes ici que ta progression sur ${APP_NAME}. Si tu veux aussi protéger ta progression sur les autres thèmes, exporte-les depuis leurs pages respectives.`;
+  note.style.display = 'block';
 }
 
 
@@ -211,6 +215,10 @@ function applyAppBranding() {
   const dayTotalElement = document.getElementById("day-total");
   if (dayTotalElement) {
     dayTotalElement.textContent = String(APP.TOTAL_DAYS || 0);
+  }
+  const supportLink = document.getElementById("support-link");
+  if (supportLink) {
+    supportLink.href = APP_SUPPORT_URL;
   }
 }
 

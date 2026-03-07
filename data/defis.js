@@ -176,7 +176,7 @@ const DefisEnveloppe = [
   {
     jour: 3,
     titre: "Mantra de sécurité",
-    description: "Écris une phrase courte qui t’évoque la sécurité. Murmure-la 3 fois dans ta tête en t’asseyant calmement.\n\nPar exemple : \"J’ai tout ce dont j’ai besoin et même plus. Je suis en sécurité\"",
+    description: "Écris une phrase courte qui t’évoque la sécurité (et que tu sais DÉJÀ vraie, même si ton corps envoie encore des signaux d'alerte). Murmure-la 3 fois dans ta tête en t’asseyant calmement.\n\nPar exemple : \"J’ai tout ce dont j’ai besoin et même plus. Je suis en sécurité\"",
     termine: false,
     dateValidation: null
   },

@@ -15,10 +15,14 @@ const appFromUrl = urlParams.get("app");
 // variables possibles : ["origine", "enveloppe", "emergence"]
 // puis quand les paramètres seront entrés "fondement" (pour la mini-app bonus sur la préparation de notre environnement pour bien vivre le programme principal) et éventuellement "envol"
 window.ALLOWED_APP_IDS = ["origine", "enveloppe", "emergence"];
+// Les notifications suivent exactement les mêmes pages
 window.NOTIFICATION_APP_IDS = window.ALLOWED_APP_IDS;
 
 // CHANGER CETTE VARIABLE pour choisir la PAGE PAR DÉFAUT vers laquelle on est redirigé en cas de soucis :
 window.DEFAULT_APP_ID = "enveloppe";
+
+// OneSignal : laisser sur false tant que tu veux seulement les notifs natives
+window.ENABLE_ONESIGNAL = false;
 
 // Programme actif
 window.APP_ID = window.ALLOWED_APP_IDS.includes(appFromUrl)
@@ -44,6 +48,7 @@ window.APP_CONFIGS = {
     MAIN_TITLE: "Vers une alimentation consciente en 21 jours",
     BROWSER_TITLE: "ORIGINE - Défi Quotidien",
     TOTAL_DAYS: 21
+    SUPPORT_URL: "https://coaching.sekhamet.com/school/course/origine/"
   },
 
   enveloppe: {
@@ -59,6 +64,7 @@ window.APP_CONFIGS = {
     MAIN_TITLE: "Je fais de mon corps mon Sanctuaire en 30 jours",
     BROWSER_TITLE: "ENVELOPPE - Défi Quotidien",
     TOTAL_DAYS: 31
+    SUPPORT_URL: "https://coaching.sekhamet.com/school/course/enveloppe/"
   },
 
   emergence: {
@@ -74,6 +80,7 @@ window.APP_CONFIGS = {
     MAIN_TITLE: "Je fais de mon Inconscient mon Allié évolutif en 66 jours",
     BROWSER_TITLE: "EMERGENCE - Défi Quotidien",
     TOTAL_DAYS: 62
+    SUPPORT_URL: "https://coaching.sekhamet.com/school/course/emergence/"
   }
 };
 

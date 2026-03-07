@@ -572,8 +572,46 @@ document.addEventListener('DOMContentLoaded', async function() {
         pauseProgressionButton.dataset.listenerAttached = "true";
 
         pauseProgressionButton.addEventListener('click', function () {
-          const newPausedState = !isProgressPaused();
+
+          const currentlyPaused = isProgressPaused();
+          const newPausedState = !currentlyPaused;
+
+          // Si on passe en pause
+          if (!currentlyPaused && newPausedState) {
+
+            const jourActuel = parseInt(lsGet('jour_actuel', '1'), 10) || 1;
+
+            let wasCompleted = false;
+
+            if (window.DEFIS && window.DEFIS[jourActuel - 1]) {
+              wasCompleted = window.DEFIS[jourActuel - 1].termine === true;
+            }
+
+            lsSet('pause_day_was_completed', wasCompleted ? 'true' : 'false');
+          }
+
           setProgressPaused(newPausedState);
+
+
+          // Si on relance la progression
+          if (currentlyPaused && !newPausedState) {
+
+            const wasCompleted = lsGet('pause_day_was_completed', 'false') === 'true';
+
+            if (wasCompleted) {
+
+              let jourActuel = parseInt(lsGet('jour_actuel', '1'), 10) || 1;
+
+              if (window.DEFIS && jourActuel < window.DEFIS.length) {
+                jourActuel = jourActuel + 1;
+                lsSet('jour_actuel', String(jourActuel));
+              }
+            }
+
+            // On efface la mémoire de pause
+            lsRemove('pause_day_was_completed');
+          }
+
 
           if (!newPausedState) {
             const aujourdhui = new Date().toLocaleDateString('fr-FR');
@@ -588,6 +626,7 @@ document.addEventListener('DOMContentLoaded', async function() {
               ? `⏸️ La progression ${APP_NAME} est maintenant en pause.`
               : `▶️ La progression ${APP_NAME} reprend à partir d’aujourd’hui.`
           );
+          window.location.reload();
         });
       }
 

@@ -613,12 +613,6 @@ document.addEventListener('DOMContentLoaded', async function() {
           }
 
 
-          if (!newPausedState) {
-            const aujourdhui = new Date().toLocaleDateString('fr-FR');
-            lsSet('dernier_acces', aujourdhui);
-            lsSet('dernier_changement_jour', aujourdhui);
-          }
-
           updatePauseProgressionButton();
 
           alert(

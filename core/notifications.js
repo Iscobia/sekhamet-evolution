@@ -770,7 +770,7 @@ async function envoyerNotificationDuJour(isTest = false) {
       }
       
       // NOTIFICATION DE TEST vs QUOTIDIENNE
-    const isTest = window.isTestNotification === true;
+    const isTestMode = isTest === true;
     
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
       // Notification quotidienne via Service Worker
@@ -781,7 +781,7 @@ async function envoyerNotificationDuJour(isTest = false) {
           jour: jourActuel,
           titre: defi.titre,
           description: defi.description,
-          isTest: isTest,
+          isTest: isTestMode,
           icon: APP_ICON_192,
           badge: APP_ICON_192,
           url: window.location.href,
@@ -805,7 +805,10 @@ async function envoyerNotificationDuJour(isTest = false) {
         }
       };
       
-      const notification = new Notification(`🎯 ${APP_NAME} - Test Notification`, options);
+      const notification = new Notification(
+        isTestMode ? `🎯 ${APP_NAME} - Test Notification` : `🔔 ${APP_NAME} - Jour ${jourActuel}`,
+        options
+      );
       
       // Gestion des clics sur la notification
       notification.onclick = function(event) {

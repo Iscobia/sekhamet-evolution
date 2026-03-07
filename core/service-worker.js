@@ -12,12 +12,12 @@ try {
 }
 */
 
-const CACHE_NAME = 'envol-cache-v1';
+const CACHE_NAME = 'evolution-cache-v1';
 const urlsToCache = [
-  '/sekhamet-envol/',
-  '/sekhamet-envol/index.html',
-  '/sekhamet-envol/style.css',
-  '/sekhamet-envol/data/defis.js',
+  '/sekhamet-evolution/',
+  '/sekhamet-evolution/index.html',
+  '/sekhamet-evolution/style.css',
+  '/sekhamet-evolution/data/defis.js',
 ];
 
 self.addEventListener('install', (event) => {

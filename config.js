@@ -47,7 +47,7 @@ window.APP_CONFIGS = {
     INSTALL_LABEL: "📱 Installer ORIGINE sur l'écran d'accueil",
     MAIN_TITLE: "Vers une alimentation consciente en 21 jours",
     BROWSER_TITLE: "ORIGINE - Défi Quotidien",
-    TOTAL_DAYS: 21
+    TOTAL_DAYS: 21,
     SUPPORT_URL: "https://coaching.sekhamet.com/school/course/origine/"
   },
 
@@ -63,7 +63,7 @@ window.APP_CONFIGS = {
     INSTALL_LABEL: "📱 Installer ENVELOPPE sur l'écran d'accueil",
     MAIN_TITLE: "Je fais de mon corps mon Sanctuaire en 30 jours",
     BROWSER_TITLE: "ENVELOPPE - Défi Quotidien",
-    TOTAL_DAYS: 31
+    TOTAL_DAYS: 31,
     SUPPORT_URL: "https://coaching.sekhamet.com/school/course/enveloppe/"
   },
 
@@ -79,7 +79,7 @@ window.APP_CONFIGS = {
     INSTALL_LABEL: "📱 Installer EMERGENCE sur l'écran d'accueil",
     MAIN_TITLE: "Je fais de mon Inconscient mon Allié évolutif en 66 jours",
     BROWSER_TITLE: "EMERGENCE - Défi Quotidien",
-    TOTAL_DAYS: 62
+    TOTAL_DAYS: 62,
     SUPPORT_URL: "https://coaching.sekhamet.com/school/course/emergence/"
   }
 };

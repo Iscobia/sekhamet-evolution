@@ -110,14 +110,6 @@ function updateBackupWarningNote() {
 }
 
 
-// Helpers localStorage (pour éviter les oublis getItem/removeItem)
-function lsGet(k, fallback = null) {
-  const v = localStorage.getItem(storageKey(k));
-  return v === null ? fallback : v;
-}
-function lsSet(k, v) { localStorage.setItem(storageKey(k), v); }
-function lsRemove(k) { localStorage.removeItem(storageKey(k)); }
-
 let jourActuel = parseInt(lsGet('jour_actuel', '1'), 10) || 1;
 let jourAffiche = jourActuel;
 

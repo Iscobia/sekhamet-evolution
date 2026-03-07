@@ -44,6 +44,32 @@ function lsRemove(key) {
   localStorage.removeItem(storageKey(key));
 }
 
+// ============== FONCTION PAUSE ==================//
+
+function isProgressPaused() {
+  return lsGet('progress_paused', 'false') === 'true';
+}
+
+function setProgressPaused(value) {
+  lsSet('progress_paused', value ? 'true' : 'false');
+}
+
+function updatePauseProgressionButton() {
+  const btn = document.getElementById('pause-progression-btn');
+  if (!btn) return;
+
+  if (isProgressPaused()) {
+    btn.textContent = `▶️ Relancer ma progression dans ${APP_NAME}`;
+    btn.classList.add('is-paused');
+  } else {
+    btn.textContent = `⏸️ Mettre ma progression dans ${APP_NAME} en pause`;
+    btn.classList.remove('is-paused');
+  }
+}
+
+// ============== FIN de la FONCTION PAUSE ==================//
+
+
 let INSTALL_APP_NAME = "EVOLUTION";
 
 async function loadInstallAppNameFromManifest() {
@@ -167,6 +193,11 @@ function applyAppBranding() {
   if (footerLogo) {
     footerLogo.src = APP_ICON_192;
     footerLogo.alt = APP_NAME;
+  }
+
+  const dayTotalElement = document.getElementById("day-total");
+  if (dayTotalElement) {
+    dayTotalElement.textContent = String(APP.TOTAL_DAYS || 0);
   }
 }
 
@@ -518,10 +549,12 @@ document.addEventListener('DOMContentLoaded', async function() {
       // Éléments DOM
       const currentDayElement = document.getElementById('current-day');
       const dayCurrentElement = document.getElementById('day-current');
+      const dayTotalElement = document.getElementById('day-total');
       const challengeTitleElement = document.getElementById('challenge-title');
       const challengeDescriptionElement = document.getElementById('challenge-description');
       const markDoneButton = document.getElementById('mark-done-btn');
-    
+      const pauseProgressionButton = document.getElementById('pause-progression-btn');
+
     let notesSaveTimer = null;
     
     function setNotesStatus(msg) {
@@ -531,6 +564,34 @@ document.addEventListener('DOMContentLoaded', async function() {
       
       // Synchroniser l'affichage avec l'état global (pas de "let" ici : on utilise le jourAffiche global)
       jourAffiche = jourActuel;
+
+      // On vérifie l'état de pause ou d'avancement de chaque progression :
+      updatePauseProgressionButton();
+
+      if (pauseProgressionButton && !pauseProgressionButton.dataset.listenerAttached) {
+        pauseProgressionButton.dataset.listenerAttached = "true";
+
+        pauseProgressionButton.addEventListener('click', function () {
+          const newPausedState = !isProgressPaused();
+          setProgressPaused(newPausedState);
+
+          if (!newPausedState) {
+            const aujourdhui = new Date().toLocaleDateString('fr-FR');
+            lsSet('dernier_acces', aujourdhui);
+            lsSet('dernier_changement_jour', aujourdhui);
+          }
+
+          updatePauseProgressionButton();
+
+          alert(
+            newPausedState
+              ? `⏸️ La progression ${APP_NAME} est maintenant en pause.`
+              : `▶️ La progression ${APP_NAME} reprend à partir d’aujourd’hui.`
+          );
+        });
+      }
+
+
 
 
       // Listener DU bouton "Marquer comme accompli" (à attacher UNE SEULE FOIS)
@@ -736,6 +797,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 
 function verifierEtAvancerJour() {
+  if (isProgressPaused()) {
+    console.log(`⏸️ [${APP_NAME}] progression en pause : aucun avancement du jour`);
+    return;
+  }
   try {
     let jour = parseInt(lsGet('jour_actuel', '1'), 10);
     if (!jour || isNaN(jour)) jour = 1;
@@ -881,8 +946,10 @@ function setNoteForDay(day, text) {
 
       if (currentDayElement) currentDayElement.textContent = jour;
       if (dayCurrentElement) dayCurrentElement.textContent = jour;
+      if (dayTotalElement) dayTotalElement.textContent = String(APP.TOTAL_DAYS || 0);
       if (challengeTitleElement) challengeTitleElement.textContent = defi.titre;
       if (challengeDescriptionElement) challengeDescriptionElement.textContent = defi.description;
+
 
   // Notes : charger celles du jour affiché
   if (notesTextarea) notesTextarea.value = getNoteForDay(jour);
@@ -1359,8 +1426,9 @@ setTimeout(() => {
 
 // ====== Notification journalière au réveil de l'app (1 fois / jour) ======
     async function showDailyWakeNotificationIfNeeded() {
+      if (isProgressPaused()) return false;
       const today = new Date().toLocaleDateString('fr-FR');
-    
+
       // Déjà montré aujourd'hui -> stop
       if (lsGet('last_daily_notif_shown') === today) return false;
 
@@ -1388,7 +1456,7 @@ setTimeout(() => {
             body: "Ton défi du jour t’attend ✨",
             icon: ICON_192,
             badge: ICON_192,
-            tag: "envol-daily",
+            tag: `${APP_ID}-daily`,
             renotify: false
           });
           lsSet('last_daily_notif_shown', today);

@@ -33,6 +33,36 @@ body {
   letter-spacing: 0.5px; /* Optionnel pour meilleure lisibilité */
 }
 
+/* ========= BOUTON PAUSE ========= */
+
+.pause-progression-wrap {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.pause-progression-btn {
+  border: 1px solid rgba(11, 37, 47, 0.18);
+  background: rgba(11, 37, 47, 0.06);
+  color: #0b252f;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s, color 0.2s;
+}
+
+.pause-progression-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(11, 37, 47, 0.10);
+}
+
+.pause-progression-btn.is-paused {
+  background: rgba(239, 68, 68, 0.10);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #b91c1c;
+}
+
 
 /*================================ BOUTONS TECHNIQUES ================================*/
 

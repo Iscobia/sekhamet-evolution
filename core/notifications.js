@@ -23,6 +23,7 @@ function notifLsSet(key, value) {
 
 function isProgressPaused() {
   return notifLsGet('progress_paused', 'false') === 'true';
+  return localStorage.getItem(`${STORAGE_PREFIX}progress_paused`) === 'true';
 }
 
 

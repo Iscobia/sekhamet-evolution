@@ -12,8 +12,7 @@ try {
 }
 */
 
-const CACHE_NAME = 'evolution-cache-v2';
-const urlsToCache = [
+const CACHE_NAME = 'evolution-cache-v2.5';
 const urlsToCache = [
   '/sekhamet-evolution/',
   '/sekhamet-evolution/index.html',
@@ -25,7 +24,7 @@ const urlsToCache = [
   '/sekhamet-evolution/core/app.js',
   '/sekhamet-evolution/core/notifications.js'
 ];
-];
+
 
 self.addEventListener('install', (event) => {
   console.log('[SW] Installation');

@@ -215,6 +215,114 @@ function applyAppBranding() {
 }
 
 
+function getNotificationAppIds() {
+  return Array.isArray(window.NOTIFICATION_APP_IDS) && window.NOTIFICATION_APP_IDS.length
+    ? window.NOTIFICATION_APP_IDS
+    : [APP_ID];
+}
+
+function appStorageKey(appId, key) {
+  return `${appId}_${key}`;
+}
+
+function appLsGet(appId, key, fallback = null) {
+  const value = localStorage.getItem(appStorageKey(appId, key));
+  return value !== null ? value : fallback;
+}
+
+function appLsSet(appId, key, value) {
+  localStorage.setItem(appStorageKey(appId, key), value);
+}
+
+function appLsRemove(appId, key) {
+  localStorage.removeItem(appStorageKey(appId, key));
+}
+
+function getDefiByDayForApp(appId, jourNumero) {
+  const defis = window.DEFIS_BY_APP?.[appId];
+  if (!Array.isArray(defis)) return null;
+  return defis.find(defi => defi.jour === jourNumero) || null;
+}
+
+function isProgressPausedForApp(appId) {
+  return appLsGet(appId, 'progress_paused', 'false') === 'true';
+}
+
+async function showDailyWakeNotificationIfNeededForApp(appId) {
+  const appConfig = window.APP_CONFIGS?.[appId];
+  if (!appConfig) return false;
+
+  if (isProgressPausedForApp(appId)) return false;
+
+  const today = new Date().toLocaleDateString('fr-FR');
+  const lastShownKey = 'last_daily_notif_shown';
+  const lockKey = 'daily_notif_lock';
+
+  if (appLsGet(appId, lastShownKey) === today) return false;
+  if (appLsGet(appId, lockKey) === today) return false;
+  appLsSet(appId, lockKey, today);
+
+  if (!('Notification' in window)) return false;
+  if (Notification.permission !== 'granted') return false;
+
+  try {
+    const jourActuel = parseInt(appLsGet(appId, 'jour_actuel', '1'), 10) || 1;
+    const defi = getDefiByDayForApp(appId, jourActuel);
+    if (!defi) {
+      appLsRemove(appId, lockKey);
+      return false;
+    }
+
+    const notifTitle = `${appConfig.NAME} - Jour ${jourActuel} - ${defi.titre}`;
+    const notifBody = (defi.description || '').substring(0, 240);
+    const icon192 = appConfig.ICON_192 || './core/assets/icons/default-192.png';
+    const targetUrl = `${window.location.origin}/sekhamet-evolution/?app=${appId}`;
+
+    const reg = await navigator.serviceWorker?.getRegistration?.();
+    if (reg?.showNotification) {
+      await reg.showNotification(notifTitle, {
+        body: notifBody,
+        icon: icon192,
+        badge: icon192,
+        tag: `${appId}-jour-${jourActuel}`,
+        requireInteraction: true,
+        data: {
+          jour: String(jourActuel),
+          url: targetUrl
+        }
+      });
+    } else {
+      new Notification(notifTitle, {
+        body: notifBody,
+        icon: icon192,
+        tag: `${appId}-jour-${jourActuel}`
+      });
+    }
+
+    appLsSet(appId, lastShownKey, today);
+    return true;
+  } catch (e) {
+    appLsRemove(appId, lockKey);
+    console.warn(`Notif wake impossible pour ${appId}:`, e);
+    return false;
+  }
+}
+
+async function showDailyWakeNotificationsForConfiguredApps() {
+  const appIds = getNotificationAppIds();
+  const results = [];
+
+  for (const appId of appIds) {
+    const sent = await showDailyWakeNotificationIfNeededForApp(appId);
+    results.push({ appId, sent });
+  }
+
+  console.log('🔔 Résultats wake multi-app:', results);
+  return results;
+}
+
+
+
 // === On attend que envol-notifications.js soit chargé :
 
 // Au début de app.js
@@ -1379,7 +1487,7 @@ function setNoteForDay(day, text) {
         genererCalendrier();
       }
 
-      showDailyWakeNotificationIfNeeded().then(ok => console.log('🔔 Notif wake envoyée ?', ok));
+      showDailyWakeNotificationsForConfiguredApps().then(results => console.log('🔔 Notifs wake envoyées ?', results));
 
 
 
@@ -1387,7 +1495,7 @@ function setNoteForDay(day, text) {
         if (document.visibilityState === 'visible') {
           console.log('👁️ [APP] Retour au premier plan -> resync jour');
           verifierEtAvancerJour();
-          showDailyWakeNotificationIfNeeded();
+          showDailyWakeNotificationsForConfiguredApps();
         }
       });
 
@@ -1537,6 +1645,9 @@ setTimeout(() => {
     } // FIn des Notification journalières au réveil de l'app
 
 window.showDailyWakeNotificationIfNeeded = showDailyWakeNotificationIfNeeded;
+window.showDailyWakeNotificationIfNeededForApp = showDailyWakeNotificationIfNeededForApp;
+window.showDailyWakeNotificationsForConfiguredApps = showDailyWakeNotificationsForConfiguredApps;
+
 
 //==========================================================
 //================== DEBOGG SECTION =========================

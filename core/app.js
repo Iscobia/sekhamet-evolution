@@ -13,6 +13,8 @@ const APP_BROWSER_TITLE = APP.BROWSER_TITLE || `${APP_NAME} - Défi Quotidien`;
 const APP_ICON_192 = APP.ICON_192 || "./core/assets/icons/default-192.png";
 const APP_ICON_512 = APP.ICON_512 || "./core/assets/icons/default-512.png";
 const APP_SUPPORT_URL = APP.SUPPORT_URL || "#";
+const TECH_SUPPORT_EMAIL = window.TECH_SUPPORT_EMAIL || "";
+
 
 console.log("APP_ID:", APP_ID);
 console.log("APP_NAME:", APP_NAME);
@@ -212,6 +214,117 @@ function applyAppBranding() {
   if (supportLink) {
     supportLink.href = APP_SUPPORT_URL;
   }
+}
+
+let errorBannerInitialized = false;
+let latestTechnicalError = null;
+const technicalErrorHistory = [];
+
+function pushTechnicalError(entry) {
+  technicalErrorHistory.push(entry);
+  while (technicalErrorHistory.length > 10) {
+    technicalErrorHistory.shift();
+  }
+  latestTechnicalError = entry;
+}
+
+function buildTechnicalErrorReport() {
+  const lines = [
+    `App: ${APP_NAME}`,
+    `App ID: ${APP_ID}`,
+    `URL: ${window.location.href}`,
+    `User agent: ${navigator.userAgent}`,
+    `Date: ${new Date().toISOString()}`,
+    ''
+  ];
+
+  technicalErrorHistory.forEach((entry, index) => {
+    lines.push(`--- Erreur ${index + 1} ---`);
+    lines.push(`Type: ${entry.type}`);
+    lines.push(`Message: ${entry.message || ''}`);
+    if (entry.source) lines.push(`Source: ${entry.source}`);
+    if (entry.lineno) lines.push(`Ligne: ${entry.lineno}`);
+    if (entry.colno) lines.push(`Colonne: ${entry.colno}`);
+    if (entry.stack) lines.push(`Stack: ${entry.stack}`);
+    lines.push('');
+  });
+
+  return lines.join('\n');
+}
+
+function showTechnicalErrorBanner(entry) {
+  pushTechnicalError(entry);
+
+  const banner = document.getElementById('error-banner');
+  const text = document.getElementById('error-banner-text');
+  const mailBtn = document.getElementById('error-banner-mail');
+  const copyBtn = document.getElementById('error-banner-copy');
+  const closeBtn = document.getElementById('error-banner-close');
+
+  if (!banner || !text || !mailBtn || !copyBtn || !closeBtn) return;
+
+  text.textContent = `Une erreur a été détectée dans ${APP_NAME}. Tu peux continuer à utiliser l’app, ou envoyer un signalement technique.`;
+
+  banner.hidden = false;
+
+  if (!errorBannerInitialized) {
+    closeBtn.addEventListener('click', () => {
+      banner.hidden = true;
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const report = buildTechnicalErrorReport();
+      try {
+        await navigator.clipboard.writeText(report);
+        copyBtn.textContent = '✅ Détails copiés';
+        setTimeout(() => {
+          copyBtn.textContent = '📋 Copier les détails';
+        }, 1500);
+      } catch (e) {
+        console.warn('Copie impossible :', e);
+      }
+    });
+
+    mailBtn.addEventListener('click', () => {
+      const report = buildTechnicalErrorReport();
+
+      if (!TECH_SUPPORT_EMAIL) {
+        alert("Aucun e-mail de support n'est configuré pour l'instant. Tu peux copier les détails puis les envoyer manuellement.");
+        return;
+      }
+
+      const subject = encodeURIComponent(`[${APP_NAME}] Signalement technique`);
+      const body = encodeURIComponent(report);
+      window.location.href = `mailto:${TECH_SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
+    });
+
+    errorBannerInitialized = true;
+  }
+}
+
+function setupTechnicalErrorCapture() {
+  window.addEventListener('error', (event) => {
+    showTechnicalErrorBanner({
+      type: 'error',
+      message: event.message || 'Erreur inconnue',
+      source: event.filename || '',
+      lineno: event.lineno || '',
+      colno: event.colno || '',
+      stack: event.error?.stack || ''
+    });
+  });
+
+  window.addEventListener('unhandledrejection', (event) => {
+    const reason = event.reason;
+    showTechnicalErrorBanner({
+      type: 'unhandledrejection',
+      message: reason?.message || String(reason || 'Promesse rejetée'),
+      source: '',
+      lineno: '',
+      colno: '',
+      stack: reason?.stack || ''
+    });
+  });
 }
 
 
@@ -621,6 +734,7 @@ function checkForUpdates() {
 
 document.addEventListener('DOMContentLoaded', async function() {
     console.log(`🚀 Initialisation ${APP_NAME}...`);
+      setupTechnicalErrorCapture();
       await loadInstallAppNameFromManifest();
       debugOneSignal();
     

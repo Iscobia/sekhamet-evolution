@@ -20,6 +20,8 @@ window.NOTIFICATION_APP_IDS = window.ALLOWED_APP_IDS;
 
 // CHANGER CETTE VARIABLE pour choisir la PAGE PAR DÉFAUT vers laquelle on est redirigé en cas de soucis :
 window.DEFAULT_APP_ID = "enveloppe";
+window.TECH_SUPPORT_EMAIL = "contact@sekhamet.com";
+
 
 // OneSignal : laisser sur false tant que tu veux seulement les notifs natives
 window.ENABLE_ONESIGNAL = false;

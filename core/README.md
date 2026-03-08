@@ -1,2 +1,2 @@
-# base-pwa-coaching
-Moteur des PWA : ORIGINE, ENVELOPPE, EMERGENCE et EVOLUTION
+# sekhamet-evolution
+PWA regroupants les défis journaliers et supports des programme de coaching ORIGINE, ENVELOPPE et EMERGENCE de Sekhamet

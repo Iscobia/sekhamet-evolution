@@ -12,7 +12,7 @@ try {
 }
 */
 
-const CACHE_NAME = 'evolution-cache-v3';
+const CACHE_NAME = 'evolution-cache-v1.0.0';
 const urlsToCache = [
   '/sekhamet-evolution/',
   '/sekhamet-evolution/index.html',

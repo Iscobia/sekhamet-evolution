@@ -248,6 +248,21 @@ function isProgressPausedForApp(appId) {
   return appLsGet(appId, 'progress_paused', 'false') === 'true';
 }
 
+
+function buildNotificationTargetUrl(appId) {
+  const allowedIds = Array.isArray(window.ALLOWED_APP_IDS) ? window.ALLOWED_APP_IDS : [APP_ID];
+  const currentUrl = new URL(window.location.href);
+
+  if (allowedIds.length <= 1) {
+    currentUrl.searchParams.delete('app');
+    return currentUrl.toString();
+  }
+
+  currentUrl.searchParams.set('app', appId);
+  return currentUrl.toString();
+}
+
+
 async function showDailyWakeNotificationIfNeededForApp(appId) {
   const appConfig = window.APP_CONFIGS?.[appId];
   if (!appConfig) return false;
@@ -276,7 +291,7 @@ async function showDailyWakeNotificationIfNeededForApp(appId) {
     const notifTitle = `${appConfig.NAME} - Jour ${jourActuel} - ${defi.titre}`;
     const notifBody = (defi.description || '').substring(0, 240);
     const icon192 = appConfig.ICON_192 || './core/assets/icons/default-192.png';
-    const targetUrl = `${window.location.origin}/sekhamet-evolution/?app=${appId}`;
+    const targetUrl = buildNotificationTargetUrl(appId);
 
     const reg = await navigator.serviceWorker?.getRegistration?.();
     if (reg?.showNotification) {
@@ -315,6 +330,8 @@ async function showDailyWakeNotificationsForConfiguredApps() {
   for (const appId of appIds) {
     const sent = await showDailyWakeNotificationIfNeededForApp(appId);
     results.push({ appId, sent });
+
+    await new Promise(resolve => setTimeout(resolve, 350));
   }
 
   console.log('🔔 Résultats wake multi-app:', results);

@@ -77,7 +77,6 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// UN SEUL notificationclick
 self.addEventListener('notificationclick', (event) => {
   try {
     const action = event.action;
@@ -86,41 +85,27 @@ self.addEventListener('notificationclick', (event) => {
 
     const appUrl = data.url || self.location.origin;
 
-    if (action === 'mark-done') {
-      event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true })
-          .then((list) => {
+    event.waitUntil((async () => {
+      const list = await clients.matchAll({ type: 'window', includeUncontrolled: true });
 
-            // Envoyer le message MARK_DONE à toutes les fenêtres ouvertes
-            list.forEach((client) => {
-              client.postMessage({
-                action: 'MARK_DONE',
-                jour: data.jour
-              });
-            });
+      if (action === 'mark-done') {
+        list.forEach((client) => {
+          client.postMessage({
+            action: 'MARK_DONE',
+            jour: data.jour
+          });
+        });
+      }
 
-            // Si une fenêtre existe, on la focus
-            if (list && list.length > 0) {
-              return list[0].focus();
-            }
+      const matchingClient = list.find((client) => client.url === appUrl);
 
-            // Sinon on ouvre l'app proprement
-            return clients.openWindow(appUrl);
-          })
-      );
-      return;
-    }
+      if (matchingClient) {
+        await matchingClient.focus();
+        return;
+      }
 
-    // view / settings / clic normal -> ouvrir ou focus l'app
-    event.waitUntil(
-      clients.matchAll({ type: 'window', includeUncontrolled: true })
-        .then((list) => {
-          if (list && list.length) {
-            return list[0].focus();
-          }
-          return clients.openWindow(appUrl);
-        })
-    );
+      await clients.openWindow(appUrl);
+    })());
 
   } catch (e) {
     console.error('[SW] Erreur notificationclick:', e);

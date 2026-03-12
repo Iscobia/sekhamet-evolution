@@ -1,10 +1,10 @@
 {
-  "id": "/sekhamet-evolution/",
+  "id": "/",
   "name": "EVOLUTION - Défis quotidiens et Supports d'apprentissages",
   "short_name": "EVOLUTION",
   "description": "Défis quotidiens sur l'alimentation consciente, le retour à Soi par le corps et l'utilisation de son inconscient comme un Allié",
-  "start_url": "/sekhamet-evolution/",
-  "scope": "/sekhamet-evolution/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0b252f",
   "theme_color": "#0b252f",

@@ -14,15 +14,15 @@ try {
 
 const CACHE_NAME = 'evolution-cache-v1.0.0';
 const urlsToCache = [
-  '/sekhamet-evolution/',
-  '/sekhamet-evolution/index.html',
-  '/sekhamet-evolution/config.js',
-  '/sekhamet-evolution/manifest.json',
-  '/sekhamet-evolution/theme.css',
-  '/sekhamet-evolution/data/defis.js',
-  '/sekhamet-evolution/core/style.css',
-  '/sekhamet-evolution/core/app.js',
-  '/sekhamet-evolution/core/notifications.js'
+  '/',
+  '/index.html',
+  '/config.js',
+  '/manifest.json',
+  '/theme.css',
+  '/data/defis.js',
+  '/core/style.css',
+  '/core/app.js',
+  '/core/notifications.js'
 ];
 
 

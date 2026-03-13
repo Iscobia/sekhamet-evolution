@@ -141,7 +141,13 @@ function renderProgramSelector() {
       name: "EMERGENCE",
       subtitle: "Inconscient allié",
       themeClass: "theme-emergence"
-    }
+    },
+    fondation: {
+      id: "fondation",
+      name: "FONDATION",
+      subtitle: "Prépare ton terrain",
+      themeClass: "theme-fondation"
+    },
   };
 
   const programs = allowedIds

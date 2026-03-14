@@ -947,6 +947,9 @@ backup-p {margin: 30px 0 2px 0px;}
   }
 }
 
+.program-selector-grid[data-layout="hub-with-fondation"] .program-chip.theme-fondation {
+  grid-column: 1 / -1;
+
 @media (max-width: 700px) {
   .program-selector-grid[data-layout="hub-with-fondation"] .program-chip.theme-fondation {
     grid-column: 1 / -1;
